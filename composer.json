@@ -1,0 +1,10 @@
+{
+  "require": {
+    "omnipay/common": "2.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Omnipay\\Adyen\\": "src/"
+    }
+  }
+}
