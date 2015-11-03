@@ -38,40 +38,77 @@ class Gateway extends AbstractGateway
     /**
      * Sets the username
      *
-     * @param string $username
+     * @param $username
+     * @return $this
      */
     public function setUsername($username)
     {
         $this->setParameter('username', $username);
+        return $this;
+    }
+
+    /**
+     * Returns the username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->getParameter('username');
     }
 
     /**
      * Sets the password
      *
-     * @param string $password
+     * @param $password
+     * @return $this
      */
     public function setPassword($password)
     {
         $this->setParameter('password', $password);
+        return $this;
     }
 
     /**
-     * Sets the merchant account
+     * Returns the password
      *
-     * @param string $merchant_account
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->getParameter('password');
+    }
+
+    /**
+     * Returns the merchant account
+     *
+     * @param $merchant_account
+     * @return $this
      */
     public function setMerchantAccount($merchant_account)
     {
         $this->setParameter('merchant_account', $merchant_account);
+        return $this;
     }
 
     /**
-     * Retuns a purchase (authorisation) request
+     * Returns the merchant account
+     *
+     * @return string
+     */
+    public function getMerchantAccount()
+    {
+        return $this->getParameter('merchant_account');
+    }
+
+
+    /**
+     * Returns a purchase (authorisation) request
      *
      * @param array $data
      * @return \Omnipay\Adyen\Message\Request
      */
-    public function purchase(array $data)
+    public function purchase($data)
     {
         return $this->createRequest(
             '\Omnipay\Adyen\Message\Request',
