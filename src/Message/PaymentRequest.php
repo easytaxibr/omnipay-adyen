@@ -8,7 +8,7 @@ use Omnipay\Common\Message\AbstractRequest;
  * Class Request
  * @package Omnipay\Adyen
  */
-class Request extends AbstractRequest
+class PaymentRequest extends AbstractRequest
 {
     /**
      * @var string
@@ -112,7 +112,7 @@ class Request extends AbstractRequest
      *
      * @return string
      */
-    protected function getEndpoint()
+    public function getEndpoint()
     {
         return $this->getTestMode()
             ? $this->test_endpoint
@@ -127,7 +127,26 @@ class Request extends AbstractRequest
      */
     public function getData()
     {
-        return $this->getParameters();
+        $card = $this->getCard();
+
+        return [
+            "action" => "Payment.authorise",
+            "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
+            "paymentRequest.amount.currency" => $this->getCurrency(),
+            "paymentRequest.amount.value" => $this->getAmount(),
+            "paymentRequest.reference" => $this->getTransactionReference(),
+            "paymentRequest.shopperEmail" => $card->getEmail(),
+            "paymentRequest.shopperReference" => $card->getShopperReference(),
+
+            "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
+            "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
+            "paymentRequest.card.billingAddress.city" => $card->getCity(),
+            "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
+            "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
+            "paymentRequest.card.billingAddress.country" => $card->getCountry(),
+
+            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
+        ];
     }
 
     /**
@@ -135,34 +154,15 @@ class Request extends AbstractRequest
      * Response object
      *
      * @param array $data
-     * @return Response
+     * @return PaymentResponse
      * @throws \Omnipay\Common\Exception\InvalidRequestException
      */
     public function sendData($data)
     {
-        $request = [
-            "action" => "Payment.authorise",
-            "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
-            "paymentRequest.amount.currency" => $this->getCurrency(),
-            "paymentRequest.amount.value" => $this->getAmount(),
-            "paymentRequest.reference" => $this->getTransactionReference(),
-            "paymentRequest.shopperEmail" => $data['card']->getEmail(),
-            "paymentRequest.shopperReference" => $data['card']->getShopperReference(),
-
-            "paymentRequest.card.billingAddress.street" => $data['card']->getBillingAddress1(),
-            "paymentRequest.card.billingAddress.postalCode" => $data['card']->getPostcode(),
-            "paymentRequest.card.billingAddress.city" => $data['card']->getCity(),
-            "paymentRequest.card.billingAddress.houseNumberOrName" => $data['card']->getBillingAddress2(),
-            "paymentRequest.card.billingAddress.stateOrProvince" => $data['card']->getState(),
-            "paymentRequest.card.billingAddress.country" => $data['card']->getCountry(),
-
-            'paymentRequest.additionalData.card.encrypted.json' => $data['card']->getAdyenCardData()
-        ];
-
         $response = $this->httpClient->post(
             $this->getEndpoint(),
             [],
-            http_build_query($request),
+            http_build_query($data),
             [
                 'auth' => [$this->getUsername(),$this->getPassword()]
             ]
@@ -170,6 +170,6 @@ class Request extends AbstractRequest
 
         parse_str($response->getBody(true), $response);
 
-        return $this->response = new Response($this, $response);
+        return $this->response = new PaymentResponse($this, $response);
     }
 }

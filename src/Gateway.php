@@ -106,12 +106,12 @@ class Gateway extends AbstractGateway
      * Returns a purchase (authorisation) request
      *
      * @param array $data
-     * @return \Omnipay\Adyen\Message\Request
+     * @return \Omnipay\Adyen\Message\PaymentRequest
      */
     public function purchase($data)
     {
         return $this->createRequest(
-            '\Omnipay\Adyen\Message\Request',
+            '\Omnipay\Adyen\Message\PaymentRequest',
             $data
         );
     }

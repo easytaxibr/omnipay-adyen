@@ -8,7 +8,7 @@ use Omnipay\Common\Message\AbstractResponse;
  * Class Response
  * @package Omnipay\Adyen\Message
  */
-class Response extends AbstractResponse
+class PaymentResponse extends AbstractResponse
 {
     /**
      * Returns whether the transaction was
@@ -23,7 +23,6 @@ class Response extends AbstractResponse
         } elseif ($this->data['paymentResult_resultCode'] == 'Authorised') {
             return true;
         }
-        return false;
     }
 
     /**

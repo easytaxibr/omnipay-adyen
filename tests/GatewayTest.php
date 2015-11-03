@@ -15,7 +15,7 @@ class GatewayTest extends GatewayTestCase
         );
     }
 
-    public function testPurchase()
+    public function testPurchaseReturnsCorrectClass()
     {
         $card = new CreditCard(
             [
@@ -41,6 +41,6 @@ class GatewayTest extends GatewayTestCase
                 'card' => $card
             ]
         );
-        $this->assertInstanceOf('Omnipay\Adyen\Message\Request', $request);
+        $this->assertInstanceOf('Omnipay\Adyen\Message\PaymentRequest', $request);
     }
 }
