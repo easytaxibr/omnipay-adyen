@@ -115,4 +115,18 @@ class Gateway extends AbstractGateway
             $data
         );
     }
+
+    /**
+     * Returns a refund-or-cancel request
+     *
+     * @param array $data
+     * @return \Omnipay\Adyen\Message\RefundRequest
+     */
+    public function refund($data)
+    {
+        return $this->createRequest(
+            '\Omnipay\Adyen\Message\RefundRequest',
+            $data
+        );
+    }
 }

@@ -12,7 +12,7 @@ class PaymentResponse extends AbstractResponse
 {
     /**
      * Returns whether the transaction was
-     * successful or not.
+     * successful or not
      *
      * @return bool
      */

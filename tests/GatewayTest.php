@@ -85,4 +85,35 @@ class GatewayTest extends GatewayTestCase
             $response->getMessage()
         );
     }
+
+    public function testRefundReturnsCorrectClass()
+    {
+        $request = $this->gateway->refund([]);
+        $this->assertInstanceOf('Omnipay\Adyen\Message\RefundRequest', $request);
+    }
+
+    public function testRefundWithSuccessfulTransaction()
+    {
+        $this->setMockHttpResponse('successfulRefund.txt');
+        $response = $this->gateway->refund(
+            [
+                'merchant_account' => 'some_merchant_account',
+                'transaction_id' => 'some_transaction_ref'
+            ]
+        )->send();
+
+        $this->assertInstanceOf(
+            '\Omnipay\Adyen\Message\RefundResponse',
+            $response
+        );
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals(
+            'some_success_ref',
+            $response->getTransactionId()
+        );
+        $this->assertEquals(
+            '[cancelOrRefund-received]',
+            $response->getMessage()
+        );
+    }
 }
