@@ -108,7 +108,7 @@ class Gateway extends AbstractGateway
      * @param array $data
      * @return \Omnipay\Adyen\Message\PaymentRequest
      */
-    public function purchase($data)
+    public function purchase(array $data = [])
     {
         return $this->createRequest(
             '\Omnipay\Adyen\Message\PaymentRequest',
@@ -122,7 +122,7 @@ class Gateway extends AbstractGateway
      * @param array $data
      * @return \Omnipay\Adyen\Message\RefundRequest
      */
-    public function refund($data)
+    public function refund(array $data = [])
     {
         return $this->createRequest(
             '\Omnipay\Adyen\Message\RefundRequest',
