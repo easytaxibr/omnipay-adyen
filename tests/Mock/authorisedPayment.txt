@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Date: Tue, 03 Nov 2015 12:13:49 GMT
+Server: Apache
+Set-Cookie: Path=/pal/; Secure; HttpOnly
+Content-Length: 108
+Content-Type: text/plain; charset=UTF-8
+
+paymentResult.resultCode=Authorised&paymentResult.pspReference=some_auth_ref&paymentResult.authCode=123456

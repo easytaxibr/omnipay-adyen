@@ -12,39 +12,53 @@ class PaymentRequestTest extends TestCase
 {
     public function setUp()
     {
-        $card = new CreditCard(
-            [
-                'encrypted_card_data' => 'some_gibberish',
-                'first_name' => 'Simon',
-                'last_name' => 'Silly',
-                'billing_address1' => 'Simon Carmiggeltstraat',
-                'billing_address2' => '6-50',
-                'billing_post_code' => '1011 DJ',
-                'billing_city' => 'Paris',
-                'billing_state' => 'Ille dfrance',
-                'billing_country' => 'FR',
-                'email' => 'some@gmail.com',
-                'shopper_reference' => '123654'
-            ]
-        );
-
         $this->request = new PaymentRequest(
             $this->getHttpClient(),
             $this->getHttpRequest()
         );
 
-        $this->request->initialize(
+        $request_params = array_merge(
+            $this->getPaymentParams(),
             [
                 'test_mode' => true,
                 'username' => 'some_username',
                 'password' => 'some_password',
-                'merchant_account' => 'some_merchant_account',
-                'amount' => '1.99',
-                'currency' => 'EUR',
-                'transaction_reference' => '123',
-                'card' => $card
+                'merchant_account' => 'some_merchant_account'
             ]
         );
+
+        $this->request->initialize(
+            $request_params
+        );
+    }
+
+    /**
+     * Returns the payment params
+     *
+     * @return array
+     */
+    private function getPaymentParams()
+    {
+        return [
+            'amount' => '1.99',
+            'currency' => 'EUR',
+            'transaction_reference' => '123',
+            'card' => new CreditCard(
+                [
+                    'encrypted_card_data' => 'some_gibberish',
+                    'first_name' => 'Simon',
+                    'last_name' => 'Silly',
+                    'billing_address1' => 'Simon Carmiggeltstraat',
+                    'billing_address2' => '6-50',
+                    'billing_post_code' => '1011 DJ',
+                    'billing_city' => 'Paris',
+                    'billing_state' => 'Ille dfrance',
+                    'billing_country' => 'FR',
+                    'email' => 'some@gmail.com',
+                    'shopper_reference' => '123654'
+                ]
+            )
+        ];
     }
 
     public function testGetAmountCovertsToMinorUnits()

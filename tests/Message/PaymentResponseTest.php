@@ -16,8 +16,6 @@ class PaymentResponseTest extends TestCase
             $this->getHttpClient(),
             $this->getHttpRequest()
         );
-
-
     }
 
     /**
