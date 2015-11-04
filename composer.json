@@ -17,13 +17,19 @@
       "Omnipay\\Adyen\\": "src/"
     }
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/Dandroas/omnipay-tests.git"
+    }
+  ],
   "require": {
     "omnipay/common": "2.*"
   },
   "require-dev": {
     "guzzle/plugin-mock": "~3.1",
     "mockery/mockery": "~0.8",
-    "omnipay/tests": "2.*",
+    "omnipay/tests": "master",
     "phpunit/phpunit": "~3.7.16",
     "squizlabs/php_codesniffer": "~1.4.4"
   },
