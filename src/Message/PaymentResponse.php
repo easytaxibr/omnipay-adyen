@@ -18,11 +18,7 @@ class PaymentResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        if ($this->data['paymentResult_resultCode'] == 'Refused') {
-            return false;
-        } elseif ($this->data['paymentResult_resultCode'] == 'Authorised') {
-            return true;
-        }
+        return $this->data['paymentResult_resultCode'] == 'Authorised';
     }
 
     /**

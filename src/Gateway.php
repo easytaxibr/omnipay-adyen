@@ -38,7 +38,7 @@ class Gateway extends AbstractGateway
     /**
      * Sets the username
      *
-     * @param $username
+     * @param string $username
      * @return $this
      */
     public function setUsername($username)
@@ -60,7 +60,7 @@ class Gateway extends AbstractGateway
     /**
      * Sets the password
      *
-     * @param $password
+     * @param string $password
      * @return $this
      */
     public function setPassword($password)
@@ -82,7 +82,7 @@ class Gateway extends AbstractGateway
     /**
      * Returns the merchant account
      *
-     * @param $merchant_account
+     * @param string $merchant_account
      * @return $this
      */
     public function setMerchantAccount($merchant_account)

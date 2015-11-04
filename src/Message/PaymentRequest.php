@@ -88,6 +88,7 @@ class PaymentRequest extends AbstractRequest
      */
     private function convertPriceToMinorUnits($amount, $decimal_length)
     {
+        //Wrapping in string to preserve the decimals
         $amount = (("{$amount}") * (pow(10, $decimal_length)));
         return intval("$amount");
     }
@@ -164,7 +165,7 @@ class PaymentRequest extends AbstractRequest
             [],
             http_build_query($data),
             [
-                'auth' => [$this->getUsername(),$this->getPassword()]
+                'auth' => [$this->getUsername(), $this->getPassword()]
             ]
         )->send();
 

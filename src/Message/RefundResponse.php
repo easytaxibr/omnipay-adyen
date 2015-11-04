@@ -18,9 +18,8 @@ class RefundResponse extends AbstractResponse
      */
     public function isSuccessful()
     {
-        return ($this->data['modificationResult_response'] == '[cancelOrRefund-received]')
-            ? true
-            : false;
+        return $this->data['modificationResult_response'] == '[cancelOrRefund-received]';
+
     }
 
     /**
