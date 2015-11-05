@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Date: Tue, 03 Nov 2015 12:15:58 GMT
+Server: Apache
+Set-Cookie: Path=/pal/; Secure; HttpOnly
+Content-Length: 112
+Content-Type: text/plain; charset=UTF-8
+
+paymentResult.resultCode=Refused&paymentResult.refusalReason=Refused&paymentResult.pspReference=some_refused_ref
