@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Date: Thu, 05 Nov 2015 14:12:20 GMT
+Server: Apache
+Set-Cookie: Path=/pal/; Secure; HttpOnly
+Content-Length: 1036
+Content-Type: text/plain; charset=UTF-8
+
+recurringDetailsResult.creationDate=2015-11-05T11%3A29%3A03%2B01%3A00&recurringDetailsResult.details.0.card.billingAddress.city=Paris&recurringDetailsResult.details.0.card.billingAddress.country=FR&recurringDetailsResult.details.0.card.billingAddress.houseNumberOrName=6-50&recurringDetailsResult.details.0.card.billingAddress.postalCode=1011+DJ&recurringDetailsResult.details.0.card.billingAddress.stateOrProvince=Ille+dfrance&recurringDetailsResult.details.0.card.billingAddress.street=Simon+Carmiggeltstraat&recurringDetailsResult.details.0.card.expiryMonth=12&recurringDetailsResult.details.0.card.expiryYear=2018&recurringDetailsResult.details.0.card.holderName=John+Doe&recurringDetailsResult.details.0.card.number=1111&recurringDetailsResult.details.0.creationDate=2015-11-05T11%3A29%3A03%2B01%3A00&recurringDetailsResult.details.0.recurringDetailReference=some_ref&recurringDetailsResult.details.0.variant=mc&recurringDetailsResult.lastKnownShopperEmail=some%40gmail.com&recurringDetailsResult.shopperReference=123654

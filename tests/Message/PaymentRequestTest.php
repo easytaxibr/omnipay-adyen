@@ -101,7 +101,6 @@ class PaymentRequestTest extends TestCase
             'paymentRequest.card.billingAddress.houseNumberOrName' => '6-50',
             'paymentRequest.card.billingAddress.stateOrProvince' => 'Ille dfrance',
             'paymentRequest.card.billingAddress.country' => 'FR',
-            'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
         ];
 
         $this->assertEquals($expected, $this->request->getData());

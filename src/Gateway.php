@@ -129,4 +129,18 @@ class Gateway extends AbstractGateway
             $data
         );
     }
+
+    /**
+     * Returns a Card Request
+     *
+     * @param array $data
+     * @return \Omnipay\Adyen\Message\CardRequest
+     */
+    public function getCard(array $data = [])
+    {
+        return $this->createRequest(
+            '\Omnipay\Adyen\Message\CardRequest',
+            $data
+        );
+    }
 }

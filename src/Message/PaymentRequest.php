@@ -2,6 +2,7 @@
 
 namespace Omnipay\Adyen\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Message\AbstractRequest;
 
 /**
@@ -10,6 +11,8 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class PaymentRequest extends AbstractRequest
 {
+    const ONE_CLICK = 'ONECLICK';
+
     /**
      * @var string
      */
@@ -30,26 +33,6 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
-     * Sets the password, received from the gateway
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->setParameter('password', $password);
-    }
-
-    /**
-     * Sets the merchant account, received from the gateway
-     *
-     * @param $merchant_account
-     */
-    public function setMerchantAccount($merchant_account)
-    {
-        $this->setParameter('merchant_account', $merchant_account);
-    }
-
-    /**
      * Returns the username
      *
      * @return string
@@ -57,6 +40,16 @@ class PaymentRequest extends AbstractRequest
     public function getUsername()
     {
         return $this->getParameter('username');
+    }
+
+    /**
+     * Sets the password, received from the gateway
+     *
+     * @param string $password
+     */
+    public function setPassword($password)
+    {
+        $this->setParameter('password', $password);
     }
 
     /**
@@ -70,6 +63,16 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
+     * Sets the merchant account, received from the gateway
+     *
+     * @param string $merchant_account
+     */
+    public function setMerchantAccount($merchant_account)
+    {
+        $this->setParameter('merchant_account', $merchant_account);
+    }
+
+    /**
      * Returns the merchant account
      *
      * @return string
@@ -77,6 +80,48 @@ class PaymentRequest extends AbstractRequest
     public function getMerchantAccount()
     {
         return $this->getParameter('merchant_account');
+    }
+
+    /**
+     * Sets the type of payment eg. one click
+     *
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->setParameter('type', $type);
+        return $this;
+    }
+
+    /**
+     * Returns the type of payment eg. one click
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->getParameter('type');
+    }
+
+    /**
+     * Sets the recurring detail reference
+     *
+     * @param string $reference
+     */
+    public function setRecurringDetailReference($reference)
+    {
+        $this->setParameter('recurring_detail_reference', $reference);
+    }
+
+    /**
+     * Returns the recurring detail reference
+     *
+     * @return string
+     */
+    public function getRecurringDetailReference()
+    {
+        return $this->getParameter('recurring_detail_reference');
     }
 
     /**
@@ -124,13 +169,49 @@ class PaymentRequest extends AbstractRequest
      * Returns the data required for the request
      * to be created
      *
+     * @throws InvalidRequestException
      * @return array
      */
     public function getData()
     {
         $card = $this->getCard();
+        $type = $this->getType();
 
-        return [
+        if (!empty($type) && $type == PaymentRequest::ONE_CLICK) {
+            if (empty($card->getEmail())
+                || empty($card->getShopperReference())
+            ) {
+                throw new InvalidRequestException(
+                    'One Click and/or Recurring Payments require the email and shopper reference'
+                );
+            }
+            $payment_params = ['paymentRequest.recurring.contract' => $type];
+            $recurring_detail_reference = $this->getRecurringDetailReference();
+            if (empty($recurring_detail_reference)) {
+                //Initial One Click Payment
+                $payment_params += [
+                    'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
+                ];
+            } else {
+                //Successive One Click Payment
+                $payment_params += [
+                    'paymentRequest.selectedRecurringDetailReference' => $this->getRecurringDetailReference(),
+                    'paymentRequest.card.cvc' => $card->getCvv()
+                ];
+            }
+
+        } else {
+            $payment_params = [
+                "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
+                "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
+                "paymentRequest.card.billingAddress.city" => $card->getCity(),
+                "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
+                "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
+                "paymentRequest.card.billingAddress.country" => $card->getCountry()
+            ];
+        }
+
+        return $payment_params += [
             "action" => "Payment.authorise",
             "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
             "paymentRequest.amount.currency" => $this->getCurrency(),
@@ -138,15 +219,6 @@ class PaymentRequest extends AbstractRequest
             "paymentRequest.reference" => $this->getTransactionReference(),
             "paymentRequest.shopperEmail" => $card->getEmail(),
             "paymentRequest.shopperReference" => $card->getShopperReference(),
-
-            "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
-            "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
-            "paymentRequest.card.billingAddress.city" => $card->getCity(),
-            "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
-            "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
-            "paymentRequest.card.billingAddress.country" => $card->getCountry(),
-
-            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
         ];
     }
 
