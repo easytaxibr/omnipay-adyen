@@ -188,38 +188,18 @@ class PaymentRequest extends AbstractRequest
             $payment_params = ['paymentRequest.recurring.contract' => $type];
             $recurring_detail_reference = $this->getRecurringDetailReference();
             if (empty($recurring_detail_reference)) {
-                //Initial One Click Payment
-                $payment_params += [
-                    'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
-                ];
+                $this->addInitialOneClickPaymentParams($card, $payment_params);
             } else {
-                //Successive One Click Payment
-                $payment_params += [
-                    'paymentRequest.selectedRecurringDetailReference' => $this->getRecurringDetailReference(),
-                    'paymentRequest.card.cvc' => $card->getCvv()
-                ];
+                $this->addSuccessiveOneClickPaymentParams($card, $payment_params);
             }
 
         } else {
-            $payment_params = [
-                "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
-                "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
-                "paymentRequest.card.billingAddress.city" => $card->getCity(),
-                "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
-                "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
-                "paymentRequest.card.billingAddress.country" => $card->getCountry()
-            ];
+            $payment_params = $this->getPaymentParams($card);
         }
 
-        return $payment_params += [
-            "action" => "Payment.authorise",
-            "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
-            "paymentRequest.amount.currency" => $this->getCurrency(),
-            "paymentRequest.amount.value" => $this->getAmount(),
-            "paymentRequest.reference" => $this->getTransactionReference(),
-            "paymentRequest.shopperEmail" => $card->getEmail(),
-            "paymentRequest.shopperReference" => $card->getShopperReference(),
-        ];
+        $payment_params = $this->applyCommonPaymentParams($card, $payment_params);
+
+        return $payment_params;
     }
 
     /**
@@ -244,5 +224,74 @@ class PaymentRequest extends AbstractRequest
         parse_str($response->getBody(true), $response);
 
         return $this->response = new PaymentResponse($this, $response);
+    }
+
+    /**
+     * Applies the payment params for the initial one click payment
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @param array $payment_params
+     */
+    protected function addInitialOneClickPaymentParams($card, array &$payment_params)
+    {
+        $payment_params += [
+            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
+        ];
+    }
+
+    /**
+     * Applies the payment parameters for successive one click payments
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @param array $payment_params
+     */
+    protected function addSuccessiveOneClickPaymentParams($card, array &$payment_params)
+    {
+        $payment_params += [
+            'paymentRequest.selectedRecurringDetailReference' => $this->getRecurringDetailReference(),
+            'paymentRequest.card.cvc' => $card->getCvv()
+        ];
+    }
+
+    /**
+     * Returns the payment parameters for standard
+     * credit card payments
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @return array
+     */
+    protected function getPaymentParams($card)
+    {
+        $payment_params = [
+            "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
+            "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
+            "paymentRequest.card.billingAddress.city" => $card->getCity(),
+            "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
+            "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
+            "paymentRequest.card.billingAddress.country" => $card->getCountry(),
+            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
+        ];
+        return $payment_params;
+    }
+
+    /**
+     * Applies the parameters common to all payment types
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @param array $payment_params
+     * @return array
+     * @throws InvalidRequestException
+     */
+    protected function applyCommonPaymentParams($card, array $payment_params)
+    {
+        return $payment_params += [
+            "action" => "Payment.authorise",
+            "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
+            "paymentRequest.amount.currency" => $this->getCurrency(),
+            "paymentRequest.amount.value" => $this->getAmount(),
+            "paymentRequest.reference" => $this->getTransactionReference(),
+            "paymentRequest.shopperEmail" => $card->getEmail(),
+            "paymentRequest.shopperReference" => $card->getShopperReference(),
+        ];
     }
 }
