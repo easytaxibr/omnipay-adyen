@@ -1,0 +1,43 @@
+{
+  "name": "vivastreet/omnipay-adyen",
+  "type": "library",
+  "description": "Adyen driver for the Omnipay payment processing library",
+  "keywords": [
+    "adyen",
+    "gateway",
+    "merchant",
+    "omnipay",
+    "pay",
+    "payment"
+  ],
+  "homepage": "https://github.com/vivastreet/omnipay-adyen",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Omnipay\\Adyen\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/Dandroas/omnipay-tests.git"
+    }
+  ],
+  "require": {
+    "omnipay/common": "2.*"
+  },
+  "require-dev": {
+    "guzzle/plugin-mock": "~3.1",
+    "mockery/mockery": "~0.8",
+    "omnipay/tests": "master",
+    "phpunit/phpunit": "~3.7.16",
+    "squizlabs/php_codesniffer": "~1.4.4"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
