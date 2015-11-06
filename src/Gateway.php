@@ -16,7 +16,7 @@ use Omnipay\Common\AbstractGateway;
 class Gateway extends AbstractGateway
 {
     use GatewayAccessorTrait;
-    
+
     /**
      * Returns the name of the gateway
      *
