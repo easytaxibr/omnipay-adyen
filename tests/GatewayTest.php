@@ -1,4 +1,5 @@
 <?php
+
 namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardResponse;
@@ -7,6 +8,7 @@ use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
 use Omnipay\Adyen\Message\RefundResponse;
+use Omnipay\Adyen\Message\SecureRequest;
 use Omnipay\Tests\GatewayTestCase;
 
 class GatewayTest extends GatewayTestCase
@@ -21,7 +23,7 @@ class GatewayTest extends GatewayTestCase
     }
 
     /**
-     * Returns the payment params
+     * Returns the payment params.
      *
      * @return array
      */
@@ -43,9 +45,9 @@ class GatewayTest extends GatewayTestCase
                     'billing_state' => 'Ille dfrance',
                     'billing_country' => 'FR',
                     'email' => 'dandroas@gmail.com',
-                    'shopper_reference' => '123654'
+                    'shopper_reference' => '123654',
                 ]
-            )
+            ),
         ];
     }
 
@@ -80,7 +82,7 @@ class GatewayTest extends GatewayTestCase
         $this->setMockHttpResponse('authorisedPayment.txt');
         $payment_parms = $this->getPaymentParams() + [
                 'type' => 'ONECLICK',
-                'recurring_detail_reference' => 'some_ref'
+                'recurring_detail_reference' => 'some_ref',
             ];
 
         $response = $this->gateway->purchase($payment_parms)->send();
@@ -129,7 +131,7 @@ class GatewayTest extends GatewayTestCase
         $response = $this->gateway->refund(
             [
                 'merchant_account' => 'some_merchant_account',
-                'transaction_id' => 'some_transaction_ref'
+                'transaction_id' => 'some_transaction_ref',
             ]
         )->send();
 
@@ -156,7 +158,7 @@ class GatewayTest extends GatewayTestCase
                 'merchant_account' => 'some_merchant_account',
                 'transaction_id' => 'some_transaction_ref',
                 'contract_type' => 'ONECLICK',
-                'shopper_reference' => '123654'
+                'shopper_reference' => '123654',
             ]
         )->send();
 
@@ -200,5 +202,46 @@ class GatewayTest extends GatewayTestCase
             '123456',
             $response->getCode()
         );
+    }
+
+    public function testGetRedirectIf3DSecureIsNeeded()
+    {
+        $this->setMockHttpResponse('redirectNeeded.txt');
+        $response = $this->gateway->purchase($this->getPaymentParams())->send();
+
+        $this->assertInstanceOf(
+            PaymentResponse::class,
+            $response
+        );
+        $this->assertFalse($response->isSuccessful());
+        $this->assertTrue($response->isRedirect());
+    }
+
+    public function testCompletePurchase()
+    {
+        $_SERVER = [
+            'HTTP_USER_AGENT' => 'some_agent',
+            'HTTP_ACCEPT' => 'accept',
+            'REMOTE_ADDR' => '127.0.0.1'
+        ];
+
+        $this->getHttpRequest()->request->set(
+            'MD',
+            '123654'
+        );
+
+        $this->getHttpRequest()->request->set(
+            'PaRes',
+            'Some_response'
+        );
+        $this->setMockHttpResponse('authorisedPayment.txt');
+        $response = $this->gateway->completePurchase()->send();
+
+        $this->assertInstanceOf(
+            PaymentResponse::class,
+            $response
+        );
+        $this->assertTrue($response->isSuccessful());
+        $this->assertFalse($response->isRedirect());
     }
 }

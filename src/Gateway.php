@@ -6,6 +6,7 @@ use Omnipay\Adyen\Message\CardRequest;
 use Omnipay\Adyen\Message\GatewayAccessorTrait;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\RefundRequest;
+use Omnipay\Adyen\Message\SecureRequest;
 use Omnipay\Common\AbstractGateway;
 
 /**
@@ -79,6 +80,20 @@ class Gateway extends AbstractGateway
     {
         return $this->createRequest(
             CardRequest::class,
+            $data
+        );
+    }
+
+    /**
+     * Returns a 3D Secure Request
+     *
+     * @param array $data
+     * @return \Omnipay\Adyen\Message\SecureRequest
+     */
+    public function completePurchase(array $data = [])
+    {
+        return $this->createRequest(
+            SecureRequest::class,
             $data
         );
     }
