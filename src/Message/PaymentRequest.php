@@ -86,12 +86,10 @@ class PaymentRequest extends AbstractRequest
      * Sets the type of payment eg. one click
      *
      * @param string $type
-     * @return $this
      */
     public function setType($type)
     {
         $this->setParameter('type', $type);
-        return $this;
     }
 
     /**
@@ -248,7 +246,8 @@ class PaymentRequest extends AbstractRequest
     protected function addSuccessiveOneClickPaymentParams($card, array &$payment_params)
     {
         $payment_params += [
-            'paymentRequest.selectedRecurringDetailReference' => $this->getRecurringDetailReference(),
+            'paymentRequest.selectedRecurringDetailReference' =>
+                $this->getRecurringDetailReference(),
             'paymentRequest.card.cvc' => $card->getCvv()
         ];
     }
@@ -263,12 +262,12 @@ class PaymentRequest extends AbstractRequest
     protected function getPaymentParams($card)
     {
         $payment_params = [
-            "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
-            "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
-            "paymentRequest.card.billingAddress.city" => $card->getCity(),
-            "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
-            "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
-            "paymentRequest.card.billingAddress.country" => $card->getCountry(),
+            'paymentRequest.card.billingAddress.street' => $card->getBillingAddress1(),
+            'paymentRequest.card.billingAddress.postalCode' => $card->getPostcode(),
+            'paymentRequest.card.billingAddress.city' => $card->getCity(),
+            'paymentRequest.card.billingAddress.houseNumberOrName' => $card->getBillingAddress2(),
+            'paymentRequest.card.billingAddress.stateOrProvince' => $card->getState(),
+            'paymentRequest.card.billingAddress.country' => $card->getCountry(),
             'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
         ];
         return $payment_params;
@@ -285,13 +284,13 @@ class PaymentRequest extends AbstractRequest
     protected function applyCommonPaymentParams($card, array $payment_params)
     {
         return $payment_params += [
-            "action" => "Payment.authorise",
-            "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
-            "paymentRequest.amount.currency" => $this->getCurrency(),
-            "paymentRequest.amount.value" => $this->getAmount(),
-            "paymentRequest.reference" => $this->getTransactionReference(),
-            "paymentRequest.shopperEmail" => $card->getEmail(),
-            "paymentRequest.shopperReference" => $card->getShopperReference(),
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => $this->getMerchantAccount(),
+            'paymentRequest.amount.currency' => $this->getCurrency(),
+            'paymentRequest.amount.value' => $this->getAmount(),
+            'paymentRequest.reference' => $this->getTransactionReference(),
+            'paymentRequest.shopperEmail' => $card->getEmail(),
+            'paymentRequest.shopperReference' => $card->getShopperReference(),
         ];
     }
 }
