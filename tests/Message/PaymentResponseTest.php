@@ -24,10 +24,8 @@ class PaymentResponseTest extends TestCase
      * @param string $result_code
      * @param  array $secure_data_info
      */
-    private function setResponse(
-        $result_code,
-        $secure_data_info = []
-    ) {
+    private function setResponse($result_code, $secure_data_info = [])
+    {
         $this->response = new PaymentResponse(
             $this->request,
             array_merge(

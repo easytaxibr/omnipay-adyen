@@ -82,10 +82,8 @@ class PaymentRequest extends AbstractRequest
      * @param int $decimal_length
      * @return int
      */
-    private function convertPriceToMinorUnits(
-        $amount,
-        $decimal_length
-    ) {
+    private function convertPriceToMinorUnits($amount, $decimal_length)
+    {
         //Wrapping in string to preserve the decimals
         $amount = (("{$amount}") * (pow(10, $decimal_length)));
         return intval("$amount");
@@ -173,10 +171,8 @@ class PaymentRequest extends AbstractRequest
      * @param \Omnipay\Adyen\Message\CreditCard $card
      * @param array $payment_params
      */
-    protected function addInitialOneClickPaymentParams(
-        $card,
-        array &$payment_params
-    ) {
+    protected function addInitialOneClickPaymentParams($card, array &$payment_params)
+    {
         $payment_params['paymentRequest.additionalData.card.encrypted.json'] =
         $card->getAdyenCardData();
     }
@@ -187,10 +183,8 @@ class PaymentRequest extends AbstractRequest
      * @param \Omnipay\Adyen\Message\CreditCard $card
      * @param array $payment_params
      */
-    protected function addSuccessiveOneClickPaymentParams(
-        $card,
-        array &$payment_params
-    ) {
+    protected function addSuccessiveOneClickPaymentParams($card, array &$payment_params)
+    {
         $payment_params += [
             'paymentRequest.selectedRecurringDetailReference' =>
             $this->getRecurringDetailReference(),
@@ -227,10 +221,8 @@ class PaymentRequest extends AbstractRequest
      * @return array
      * @throws InvalidRequestException
      */
-    protected function applyCommonPaymentParams(
-        $card,
-        array $payment_params
-    ) {
+    protected function applyCommonPaymentParams($card, array $payment_params)
+    {
         $payment_params += [
             'action' => 'Payment.authorise',
             'paymentRequest.merchantAccount' => $this->getMerchantAccount(),
