@@ -174,7 +174,7 @@ class PaymentRequest extends AbstractRequest
     protected function addInitialOneClickPaymentParams($card, array &$payment_params)
     {
         $payment_params['paymentRequest.additionalData.card.encrypted.json'] =
-        $card->getAdyenCardData();
+            $card->getAdyenCardData();
     }
 
     /**
@@ -187,7 +187,7 @@ class PaymentRequest extends AbstractRequest
     {
         $payment_params += [
             'paymentRequest.selectedRecurringDetailReference' =>
-            $this->getRecurringDetailReference(),
+                $this->getRecurringDetailReference(),
             'paymentRequest.card.cvc' => $card->getCvv()
         ];
     }
