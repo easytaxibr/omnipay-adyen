@@ -11,76 +11,9 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class PaymentRequest extends AbstractRequest
 {
+    use GatewayAccessorTrait;
+
     const ONE_CLICK = 'ONECLICK';
-
-    /**
-     * @var string
-     */
-    protected $test_endpoint = 'https://pal-test.adyen.com/pal/adapter/httppost';
-    /**
-     * @var string
-     */
-    protected $live_endpoint = 'https://pal-live.adyen.com/pal/adapter/httppost';
-
-    /**
-     * Sets the username, received from gateway
-     *
-     * @param string $username
-     */
-    public function setUsername($username)
-    {
-        $this->setParameter('username', $username);
-    }
-
-    /**
-     * Returns the username
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->getParameter('username');
-    }
-
-    /**
-     * Sets the password, received from the gateway
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->setParameter('password', $password);
-    }
-
-    /**
-     * Returns the password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->getParameter('password');
-    }
-
-    /**
-     * Sets the merchant account, received from the gateway
-     *
-     * @param string $merchant_account
-     */
-    public function setMerchantAccount($merchant_account)
-    {
-        $this->setParameter('merchant_account', $merchant_account);
-    }
-
-    /**
-     * Returns the merchant account
-     *
-     * @return string
-     */
-    public function getMerchantAccount()
-    {
-        return $this->getParameter('merchant_account');
-    }
 
     /**
      * Sets the type of payment eg. one click
@@ -148,19 +81,6 @@ class PaymentRequest extends AbstractRequest
             $amount,
             $this->getCurrencyDecimalPlaces()
         );
-    }
-
-    /**
-     * Returns the API endpoint based on whether
-     * test mode is flagged or not.
-     *
-     * @return string
-     */
-    public function getEndpoint()
-    {
-        return $this->getTestMode()
-            ? $this->test_endpoint
-            : $this->live_endpoint;
     }
 
     /**
