@@ -37,7 +37,7 @@ class Gateway extends AbstractGateway
             'username' => '',
             'password' => '',
             'merchant_account' => '',
-            'testMode' => true,
+            'testMode' => true
         ];
     }
 

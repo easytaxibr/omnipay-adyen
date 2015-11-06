@@ -106,4 +106,33 @@ class PaymentRequestTest extends TestCase
 
         $this->assertEquals($expected, $this->request->getData());
     }
+
+    public function testGetDataReturnsExpectedFieldsAndValuesWhen3dSecureIsEnabled()
+    {
+        $this->request->set3dSecure(true);
+        $_SERVER = [
+            'HTTP_USER_AGENT' => 'some_agent',
+            'HTTP_ACCEPT' => 'accept'
+        ];
+        $expected = [
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => 'some_merchant_account',
+            'paymentRequest.amount.currency' => 'EUR',
+            'paymentRequest.amount.value' => 199,
+            'paymentRequest.reference' => '123',
+            'paymentRequest.shopperEmail' => 'some@gmail.com',
+            'paymentRequest.shopperReference' => '123654',
+            'paymentRequest.card.billingAddress.street' => 'Simon Carmiggeltstraat',
+            'paymentRequest.card.billingAddress.postalCode' => '1011 DJ',
+            'paymentRequest.card.billingAddress.city' => 'Paris',
+            'paymentRequest.card.billingAddress.houseNumberOrName' => '6-50',
+            'paymentRequest.card.billingAddress.stateOrProvince' => 'Ille dfrance',
+            'paymentRequest.card.billingAddress.country' => 'FR',
+            'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
+            'paymentRequest.browserInfo.userAgent' => 'some_agent',
+            'paymentRequest.browserInfo.acceptHeader' => 'accept'
+        ];
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
 }
