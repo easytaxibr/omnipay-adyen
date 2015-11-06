@@ -6,7 +6,6 @@ use Omnipay\Adyen\Message\CardRequest;
 use Omnipay\Adyen\Message\GatewayAccessorTrait;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\RefundRequest;
-use Omnipay\Adyen\Message\RefundRequestTest;
 use Omnipay\Common\AbstractGateway;
 
 /**
