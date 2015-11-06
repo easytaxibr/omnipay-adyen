@@ -2,6 +2,10 @@
 
 namespace Omnipay\Adyen;
 
+use Omnipay\Adyen\Message\CardRequest;
+use Omnipay\Adyen\Message\PaymentRequest;
+use Omnipay\Adyen\Message\RefundRequest;
+use Omnipay\Adyen\Message\RefundRequestTest;
 use Omnipay\Common\AbstractGateway;
 
 /**
@@ -111,7 +115,7 @@ class Gateway extends AbstractGateway
     public function purchase(array $data = [])
     {
         return $this->createRequest(
-            '\Omnipay\Adyen\Message\PaymentRequest',
+            PaymentRequest::class,
             $data
         );
     }
@@ -125,7 +129,7 @@ class Gateway extends AbstractGateway
     public function refund(array $data = [])
     {
         return $this->createRequest(
-            '\Omnipay\Adyen\Message\RefundRequest',
+            RefundRequest::class,
             $data
         );
     }
@@ -139,7 +143,7 @@ class Gateway extends AbstractGateway
     public function getCard(array $data = [])
     {
         return $this->createRequest(
-            '\Omnipay\Adyen\Message\CardRequest',
+            CardRequest::class,
             $data
         );
     }

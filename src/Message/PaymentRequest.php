@@ -219,9 +219,10 @@ class PaymentRequest extends AbstractRequest
             ]
         )->send();
 
-        parse_str($response->getBody(true), $response);
+        $response_data = [];
+        parse_str($response->getBody(true), $response_data);
 
-        return $this->response = new PaymentResponse($this, $response);
+        return $this->response = new PaymentResponse($this, $response_data);
     }
 
     /**
@@ -232,9 +233,8 @@ class PaymentRequest extends AbstractRequest
      */
     protected function addInitialOneClickPaymentParams($card, array &$payment_params)
     {
-        $payment_params += [
-            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
-        ];
+        $payment_params['paymentRequest.additionalData.card.encrypted.json'] =
+            $card->getAdyenCardData();
     }
 
     /**

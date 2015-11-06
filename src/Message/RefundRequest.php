@@ -117,9 +117,10 @@ class RefundRequest extends AbstractRequest
             ]
         )->send();
 
-        parse_str($response->getBody(true), $response);
+        $response_data = [];
+        parse_str($response->getBody(true), $response_data);
 
-        return $this->response = new RefundResponse($this, $response);
+        return $this->response = new RefundResponse($this, $response_data);
     }
 
     /**

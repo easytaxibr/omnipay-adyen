@@ -1,7 +1,12 @@
 <?php
 namespace Omnipay\Adyen;
 
+use Omnipay\Adyen\Message\CardResponse;
 use Omnipay\Adyen\Message\CreditCard;
+use Omnipay\Adyen\Message\PaymentRequest;
+use Omnipay\Adyen\Message\PaymentResponse;
+use Omnipay\Adyen\Message\RefundRequest;
+use Omnipay\Adyen\Message\RefundResponse;
 use Omnipay\Tests\GatewayTestCase;
 
 class GatewayTest extends GatewayTestCase
@@ -47,7 +52,7 @@ class GatewayTest extends GatewayTestCase
     public function testPurchaseReturnsCorrectClass()
     {
         $request = $this->gateway->purchase($this->getPaymentParams());
-        $this->assertInstanceOf('Omnipay\Adyen\Message\PaymentRequest', $request);
+        $this->assertInstanceOf(PaymentRequest::class, $request);
     }
 
     public function testPurchaseWithAuthorisedTransaction()
@@ -55,19 +60,7 @@ class GatewayTest extends GatewayTestCase
         $this->setMockHttpResponse('authorisedPayment.txt');
         $response = $this->gateway->purchase($this->getPaymentParams())->send();
 
-        $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\PaymentResponse',
-            $response
-        );
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(
-            'some_auth_ref',
-            $response->getTransactionId()
-        );
-        $this->assertEquals(
-            '123456',
-            $response->getCode()
-        );
+        $this->assertOneClickResponseIsCorrect($response);
     }
 
     public function testInitialOneClickPurchaseWithAuthorisedTransaction()
@@ -79,19 +72,7 @@ class GatewayTest extends GatewayTestCase
 
         $response = $this->gateway->purchase($payment_parms)->send();
 
-        $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\PaymentResponse',
-            $response
-        );
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(
-            'some_auth_ref',
-            $response->getTransactionId()
-        );
-        $this->assertEquals(
-            '123456',
-            $response->getCode()
-        );
+        $this->assertOneClickResponseIsCorrect($response);
     }
 
     public function testSuccessiveOneClickPurchaseWithAuthorisedTransaction()
@@ -104,19 +85,7 @@ class GatewayTest extends GatewayTestCase
 
         $response = $this->gateway->purchase($payment_parms)->send();
 
-        $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\PaymentResponse',
-            $response
-        );
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(
-            'some_auth_ref',
-            $response->getTransactionId()
-        );
-        $this->assertEquals(
-            '123456',
-            $response->getCode()
-        );
+        $this->assertOneClickResponseIsCorrect($response);
     }
 
     /**
@@ -129,21 +98,7 @@ class GatewayTest extends GatewayTestCase
         $payment_parms = $this->getPaymentParams() + ['type' => 'ONECLICK'];
         $payment_parms['card']->setEmail('');
 
-        $response = $this->gateway->purchase($payment_parms)->send();
-
-        $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\PaymentResponse',
-            $response
-        );
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(
-            'some_auth_ref',
-            $response->getTransactionId()
-        );
-        $this->assertEquals(
-            '123456',
-            $response->getCode()
-        );
+        $this->gateway->purchase($payment_parms)->send();
     }
 
     public function testPurchaseWithRefusedTransaction()
@@ -152,7 +107,7 @@ class GatewayTest extends GatewayTestCase
         $response = $this->gateway->purchase($this->getPaymentParams())->send();
 
         $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\PaymentResponse',
+            PaymentResponse::class,
             $response
         );
         $this->assertFalse($response->isSuccessful());
@@ -165,7 +120,7 @@ class GatewayTest extends GatewayTestCase
     public function testRefundReturnsCorrectClass()
     {
         $request = $this->gateway->refund([]);
-        $this->assertInstanceOf('Omnipay\Adyen\Message\RefundRequest', $request);
+        $this->assertInstanceOf(RefundRequest::class, $request);
     }
 
     public function testRefundWithSuccessfulTransaction()
@@ -179,7 +134,7 @@ class GatewayTest extends GatewayTestCase
         )->send();
 
         $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\RefundResponse',
+            RefundResponse::class,
             $response
         );
         $this->assertTrue($response->isSuccessful());
@@ -206,7 +161,7 @@ class GatewayTest extends GatewayTestCase
         )->send();
 
         $this->assertInstanceOf(
-            '\Omnipay\Adyen\Message\CardResponse',
+            CardResponse::class,
             $response
         );
         $this->assertTrue($response->isSuccessful());
@@ -224,6 +179,26 @@ class GatewayTest extends GatewayTestCase
         $this->assertEquals(
             '123654',
             $response->getShopperReference()
+        );
+    }
+
+    /**
+     * @param $response
+     */
+    private function assertOneClickResponseIsCorrect($response)
+    {
+        $this->assertInstanceOf(
+            PaymentResponse::class,
+            $response
+        );
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals(
+            'some_auth_ref',
+            $response->getTransactionId()
+        );
+        $this->assertEquals(
+            '123456',
+            $response->getCode()
         );
     }
 }

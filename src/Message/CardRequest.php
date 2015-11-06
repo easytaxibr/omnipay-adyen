@@ -164,8 +164,9 @@ class CardRequest extends AbstractRequest
             ]
         )->send();
 
-        parse_str($response->getBody(true), $response);
+        $response_data = [];
+        parse_str($response->getBody(true), $response_data);
 
-        return $this->response = new CardResponse($this, $response);
+        return $this->response = new CardResponse($this, $response_data);
     }
 }
