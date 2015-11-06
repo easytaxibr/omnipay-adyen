@@ -56,7 +56,7 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
-     * Optional: Sets the 3d secure to enabled status
+     * Optional: Sets 3d secure to enabled/disabled status
      *
      * @param boolean $value
      */

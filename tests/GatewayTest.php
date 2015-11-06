@@ -1,5 +1,4 @@
 <?php
-
 namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardResponse;
@@ -8,7 +7,6 @@ use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
 use Omnipay\Adyen\Message\RefundResponse;
-use Omnipay\Adyen\Message\SecureRequest;
 use Omnipay\Tests\GatewayTestCase;
 
 class GatewayTest extends GatewayTestCase
@@ -20,10 +18,15 @@ class GatewayTest extends GatewayTestCase
             $this->getHttpClient(),
             $this->getHttpRequest()
         );
+        $_SERVER = [
+            'HTTP_USER_AGENT' => 'some_agent',
+            'HTTP_ACCEPT' => 'accept',
+            'REMOTE_ADDR' => '127.0.0.1'
+        ];
     }
 
     /**
-     * Returns the payment params.
+     * Returns the payment params
      *
      * @return array
      */
@@ -204,10 +207,13 @@ class GatewayTest extends GatewayTestCase
         );
     }
 
-    public function testGetRedirectIf3DSecureIsNeeded()
+    public function testIsRedirectIf3DSecureIsNeeded()
     {
         $this->setMockHttpResponse('redirectNeeded.txt');
-        $response = $this->gateway->purchase($this->getPaymentParams())->send();
+
+        $payment_parms = $this->getPaymentParams() + ['3d_secure' => 'true'];
+
+        $response = $this->gateway->purchase($payment_parms)->send();
 
         $this->assertInstanceOf(
             PaymentResponse::class,
@@ -219,12 +225,6 @@ class GatewayTest extends GatewayTestCase
 
     public function testCompletePurchase()
     {
-        $_SERVER = [
-            'HTTP_USER_AGENT' => 'some_agent',
-            'HTTP_ACCEPT' => 'accept',
-            'REMOTE_ADDR' => '127.0.0.1'
-        ];
-
         $this->getHttpRequest()->request->set(
             'MD',
             '123654'
