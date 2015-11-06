@@ -3,6 +3,7 @@
 namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardRequest;
+use Omnipay\Adyen\Message\GatewayAccessorTrait;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\RefundRequest;
 use Omnipay\Adyen\Message\RefundRequestTest;
@@ -14,6 +15,8 @@ use Omnipay\Common\AbstractGateway;
  */
 class Gateway extends AbstractGateway
 {
+    use GatewayAccessorTrait;
+    
     /**
      * Returns the name of the gateway
      *
@@ -38,73 +41,6 @@ class Gateway extends AbstractGateway
             'testMode' => true,
         ];
     }
-
-    /**
-     * Sets the username
-     *
-     * @param string $username
-     * @return $this
-     */
-    public function setUsername($username)
-    {
-        $this->setParameter('username', $username);
-        return $this;
-    }
-
-    /**
-     * Returns the username
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->getParameter('username');
-    }
-
-    /**
-     * Sets the password
-     *
-     * @param string $password
-     * @return $this
-     */
-    public function setPassword($password)
-    {
-        $this->setParameter('password', $password);
-        return $this;
-    }
-
-    /**
-     * Returns the password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->getParameter('password');
-    }
-
-    /**
-     * Returns the merchant account
-     *
-     * @param string $merchant_account
-     * @return $this
-     */
-    public function setMerchantAccount($merchant_account)
-    {
-        $this->setParameter('merchant_account', $merchant_account);
-        return $this;
-    }
-
-    /**
-     * Returns the merchant account
-     *
-     * @return string
-     */
-    public function getMerchantAccount()
-    {
-        return $this->getParameter('merchant_account');
-    }
-
 
     /**
      * Returns a purchase (authorisation) request
