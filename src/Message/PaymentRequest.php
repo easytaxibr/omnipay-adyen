@@ -2,6 +2,7 @@
 
 namespace Omnipay\Adyen\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Message\AbstractRequest;
 
 /**
@@ -10,73 +11,48 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class PaymentRequest extends AbstractRequest
 {
-    /**
-     * @var string
-     */
-    protected $test_endpoint = 'https://pal-test.adyen.com/pal/adapter/httppost';
-    /**
-     * @var string
-     */
-    protected $live_endpoint = 'https://pal-live.adyen.com/pal/adapter/httppost';
+    use GatewayAccessorTrait;
+
+    const ONE_CLICK = 'ONECLICK';
 
     /**
-     * Sets the username, received from gateway
+     * Sets the type of payment eg. one click
      *
-     * @param string $username
+     * @param string $type
      */
-    public function setUsername($username)
+    public function setType($type)
     {
-        $this->setParameter('username', $username);
+        $this->setParameter('type', $type);
     }
 
     /**
-     * Sets the password, received from the gateway
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->setParameter('password', $password);
-    }
-
-    /**
-     * Sets the merchant account, received from the gateway
-     *
-     * @param $merchant_account
-     */
-    public function setMerchantAccount($merchant_account)
-    {
-        $this->setParameter('merchant_account', $merchant_account);
-    }
-
-    /**
-     * Returns the username
+     * Returns the type of payment eg. one click
      *
      * @return string
      */
-    public function getUsername()
+    public function getType()
     {
-        return $this->getParameter('username');
+        return $this->getParameter('type');
     }
 
     /**
-     * Returns the password
+     * Sets the recurring detail reference
      *
-     * @return string
+     * @param string $reference
      */
-    public function getPassword()
+    public function setRecurringDetailReference($reference)
     {
-        return $this->getParameter('password');
+        $this->setParameter('recurring_detail_reference', $reference);
     }
 
     /**
-     * Returns the merchant account
+     * Returns the recurring detail reference
      *
      * @return string
      */
-    public function getMerchantAccount()
+    public function getRecurringDetailReference()
     {
-        return $this->getParameter('merchant_account');
+        return $this->getParameter('recurring_detail_reference');
     }
 
     /**
@@ -108,46 +84,40 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
-     * Returns the API endpoint based on whether
-     * test mode is flagged or not.
-     *
-     * @return string
-     */
-    public function getEndpoint()
-    {
-        return $this->getTestMode()
-            ? $this->test_endpoint
-            : $this->live_endpoint;
-    }
-
-    /**
      * Returns the data required for the request
      * to be created
      *
+     * @throws InvalidRequestException
      * @return array
      */
     public function getData()
     {
         $card = $this->getCard();
+        $type = $this->getType();
 
-        return [
-            "action" => "Payment.authorise",
-            "paymentRequest.merchantAccount" => $this->getMerchantAccount(),
-            "paymentRequest.amount.currency" => $this->getCurrency(),
-            "paymentRequest.amount.value" => $this->getAmount(),
-            "paymentRequest.reference" => $this->getTransactionReference(),
-            "paymentRequest.shopperEmail" => $card->getEmail(),
-            "paymentRequest.shopperReference" => $card->getShopperReference(),
+        if (!empty($type) && $type == PaymentRequest::ONE_CLICK) {
+            if (empty($card->getEmail())
+                || empty($card->getShopperReference())
+            ) {
+                throw new InvalidRequestException(
+                    'One Click and/or Recurring Payments require the email and shopper reference'
+                );
+            }
+            $payment_params = ['paymentRequest.recurring.contract' => $type];
+            $recurring_detail_reference = $this->getRecurringDetailReference();
+            if (empty($recurring_detail_reference)) {
+                $this->addInitialOneClickPaymentParams($card, $payment_params);
+            } else {
+                $this->addSuccessiveOneClickPaymentParams($card, $payment_params);
+            }
 
-            "paymentRequest.card.billingAddress.street" => $card->getBillingAddress1(),
-            "paymentRequest.card.billingAddress.postalCode" => $card->getPostcode(),
-            "paymentRequest.card.billingAddress.city" => $card->getCity(),
-            "paymentRequest.card.billingAddress.houseNumberOrName" => $card->getBillingAddress2(),
-            "paymentRequest.card.billingAddress.stateOrProvince" => $card->getState(),
-            "paymentRequest.card.billingAddress.country" => $card->getCountry(),
+        } else {
+            $payment_params = $this->getPaymentParams($card);
+        }
 
-            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
-        ];
+        $payment_params = $this->applyCommonPaymentParams($card, $payment_params);
+
+        return $payment_params;
     }
 
     /**
@@ -169,8 +139,78 @@ class PaymentRequest extends AbstractRequest
             ]
         )->send();
 
-        parse_str($response->getBody(true), $response);
+        $response_data = [];
+        parse_str($response->getBody(true), $response_data);
 
-        return $this->response = new PaymentResponse($this, $response);
+        return $this->response = new PaymentResponse($this, $response_data);
+    }
+
+    /**
+     * Applies the payment params for the initial one click payment
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @param array $payment_params
+     */
+    protected function addInitialOneClickPaymentParams($card, array &$payment_params)
+    {
+        $payment_params['paymentRequest.additionalData.card.encrypted.json'] =
+            $card->getAdyenCardData();
+    }
+
+    /**
+     * Applies the payment parameters for successive one click payments
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @param array $payment_params
+     */
+    protected function addSuccessiveOneClickPaymentParams($card, array &$payment_params)
+    {
+        $payment_params += [
+            'paymentRequest.selectedRecurringDetailReference' =>
+                $this->getRecurringDetailReference(),
+            'paymentRequest.card.cvc' => $card->getCvv()
+        ];
+    }
+
+    /**
+     * Returns the payment parameters for standard
+     * credit card payments
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @return array
+     */
+    protected function getPaymentParams($card)
+    {
+        $payment_params = [
+            'paymentRequest.card.billingAddress.street' => $card->getBillingAddress1(),
+            'paymentRequest.card.billingAddress.postalCode' => $card->getPostcode(),
+            'paymentRequest.card.billingAddress.city' => $card->getCity(),
+            'paymentRequest.card.billingAddress.houseNumberOrName' => $card->getBillingAddress2(),
+            'paymentRequest.card.billingAddress.stateOrProvince' => $card->getState(),
+            'paymentRequest.card.billingAddress.country' => $card->getCountry(),
+            'paymentRequest.additionalData.card.encrypted.json' => $card->getAdyenCardData()
+        ];
+        return $payment_params;
+    }
+
+    /**
+     * Applies the parameters common to all payment types
+     *
+     * @param \Omnipay\Adyen\Message\CreditCard $card
+     * @param array $payment_params
+     * @return array
+     * @throws InvalidRequestException
+     */
+    protected function applyCommonPaymentParams($card, array $payment_params)
+    {
+        return $payment_params += [
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => $this->getMerchantAccount(),
+            'paymentRequest.amount.currency' => $this->getCurrency(),
+            'paymentRequest.amount.value' => $this->getAmount(),
+            'paymentRequest.reference' => $this->getTransactionReference(),
+            'paymentRequest.shopperEmail' => $card->getEmail(),
+            'paymentRequest.shopperReference' => $card->getShopperReference(),
+        ];
     }
 }
