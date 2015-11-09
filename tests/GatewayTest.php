@@ -161,7 +161,7 @@ class GatewayTest extends GatewayTestCase
                 'merchant_account' => 'some_merchant_account',
                 'transaction_id' => 'some_transaction_ref',
                 'contract_type' => 'ONECLICK',
-                'shopper_reference' => '123654',
+                'shopper_reference' => '123654'
             ]
         )->send();
 
