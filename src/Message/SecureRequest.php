@@ -49,11 +49,13 @@ class SecureRequest extends AbstractRequest
         return [
             "action" => "Payment.authorise3d",
             "paymentRequest3d.merchantAccount" => $this->getMerchantAccount(),
-            "paymentRequest3d.browserInfo.userAgent" => $_SERVER['HTTP_USER_AGENT'],
-            "paymentRequest3d.browserInfo.acceptHeader" => $_SERVER['HTTP_ACCEPT'],
+            "paymentRequest3d.browserInfo.userAgent" =>
+                $this->getHttpUserAgent(),
+            "paymentRequest3d.browserInfo.acceptHeader" =>
+                $this->getHttpAccept(),
             "paymentRequest3d.md" => $returned_data['MD'],
             "paymentRequest3d.paResponse" => $returned_data['PaRes'],
-            "paymentRequest3d.shopperIP" => $_SERVER['REMOTE_ADDR']
+            "paymentRequest3d.shopperIP" => $this->getRemoteAddr()
         ];
     }
 }

@@ -235,8 +235,8 @@ class PaymentRequest extends AbstractRequest
 
         if ($this->get3dSecure()) {
             $payment_params += [
-                'paymentRequest.browserInfo.userAgent' => $_SERVER['HTTP_USER_AGENT'],
-                'paymentRequest.browserInfo.acceptHeader' => $_SERVER['HTTP_ACCEPT']
+                'paymentRequest.browserInfo.userAgent' => $this->getHttpUserAgent(),
+                'paymentRequest.browserInfo.acceptHeader' => $this->getHttpAccept()
             ];
         }
 

@@ -235,7 +235,8 @@ class GatewayTest extends GatewayTestCase
             'Some_response'
         );
         $this->setMockHttpResponse('authorisedPayment.txt');
-        $response = $this->gateway->completePurchase()->send();
+
+        $response = $this->gateway->completePurchase(['server_info' => $_SERVER])->send();
 
         $this->assertInstanceOf(
             PaymentResponse::class,

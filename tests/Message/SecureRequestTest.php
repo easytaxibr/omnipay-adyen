@@ -17,21 +17,17 @@ class SecureRequestTest extends TestCase
             $this->getHttpRequest()
         );
 
-        $this->request->initialize(
-            [
-                'merchant_account' => 'some_merchant'
-            ]
-        );
+        $_SERVER = [
+            'HTTP_USER_AGENT' => 'some_agent',
+            'HTTP_ACCEPT' => 'accept',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ];
+
+        $this->request->initialize(['merchant_account' => 'some_merchant'] + $_SERVER);
     }
 
     public function testGetData()
     {
-        $_SERVER = [
-            'HTTP_USER_AGENT' => 'some_agent',
-            'HTTP_ACCEPT' => 'accept',
-            'REMOTE_ADDR' => '127.0.0.1'
-        ];
-
         $this->getHttpRequest()->request->set(
             'MD',
             '123654'

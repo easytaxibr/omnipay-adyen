@@ -95,4 +95,70 @@ trait GatewayAccessorTrait
             ? $this->test_endpoint
             : $this->live_endpoint;
     }
+
+    /**
+     * Optional: Set $_SERVER['HTTP_USER_AGENT']
+     * Needed if 3d secure is enabled and an
+     * Omnipay\Adyen\Message\SecureRequest is being performed
+     *
+     * @param boolean $value
+     */
+    public function setHttpUserAgent($value)
+    {
+        $this->setParameter('HTTP_USER_AGENT', $value);
+    }
+
+    /**
+     * Returns $_SERVER['HTTP_USER_AGENT']
+     *
+     * @return string
+     */
+    public function getHttpUserAgent()
+    {
+        return $this->getParameter('HTTP_USER_AGENT');
+    }
+
+    /**
+     * Optional: Set $_SERVER['HTTP_ACCEPT']
+     * Needed if 3d secure is enabled and an
+     * Omnipay\Adyen\Message\SecureRequest is being performed
+     *
+     * @param boolean $value
+     */
+    public function setHttpAccept($value)
+    {
+        $this->setParameter('HTTP_ACCEPT', $value);
+    }
+
+    /**
+     * Returns $_SERVER['HTTP_ACCEPT']
+     *
+     * @return string
+     */
+    public function getHttpAccept()
+    {
+        return $this->getParameter('HTTP_ACCEPT');
+    }
+
+    /**
+     * Optional: Set $_SERVER['REMOTE_ADDR']
+     * Needed if 3d secure is enabled and an
+     * Omnipay\Adyen\Message\SecureRequest is being performed
+     *
+     * @param boolean $value
+     */
+    public function setRemoteAddr($value)
+    {
+        $this->setParameter('REMOTE_ADDR', $value);
+    }
+
+    /**
+     * Returns $_SERVER['REMOTE_ADDR']
+     *
+     * @return string
+     */
+    public function getRemoteAddr()
+    {
+        return $this->getParameter('REMOTE_ADDR');
+    }
 }

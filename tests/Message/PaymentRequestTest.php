@@ -17,6 +17,11 @@ class PaymentRequestTest extends TestCase
             $this->getHttpRequest()
         );
 
+        $_SERVER = [
+            'HTTP_USER_AGENT' => 'some_agent',
+            'HTTP_ACCEPT' => 'accept'
+        ];
+
         $request_params = array_merge(
             $this->getPaymentParams(),
             [
@@ -24,7 +29,8 @@ class PaymentRequestTest extends TestCase
                 'username' => 'some_username',
                 'password' => 'some_password',
                 'merchant_account' => 'some_merchant_account'
-            ]
+            ],
+            $_SERVER
         );
 
         $this->request->initialize(
@@ -110,10 +116,6 @@ class PaymentRequestTest extends TestCase
     public function testGetDataReturnsExpectedFieldsAndValuesWhen3dSecureIsEnabled()
     {
         $this->request->set3dSecure(true);
-        $_SERVER = [
-            'HTTP_USER_AGENT' => 'some_agent',
-            'HTTP_ACCEPT' => 'accept'
-        ];
         $expected = [
             'action' => 'Payment.authorise',
             'paymentRequest.merchantAccount' => 'some_merchant_account',
