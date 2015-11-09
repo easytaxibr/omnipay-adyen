@@ -24,7 +24,7 @@
     }
   ],
   "require": {
-    "omnipay/common": "master"
+    "omnipay/common": "2.*"
   },
   "require-dev": {
     "guzzle/plugin-mock": "~3.1",
