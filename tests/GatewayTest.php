@@ -48,9 +48,9 @@ class GatewayTest extends GatewayTestCase
                     'billing_state' => 'Ille dfrance',
                     'billing_country' => 'FR',
                     'email' => 'dandroas@gmail.com',
-                    'shopper_reference' => '123654',
+                    'shopper_reference' => '123654'
                 ]
-            ),
+            )
         ];
     }
 
@@ -85,7 +85,7 @@ class GatewayTest extends GatewayTestCase
         $this->setMockHttpResponse('authorisedPayment.txt');
         $payment_parms = $this->getPaymentParams() + [
                 'type' => 'ONECLICK',
-                'recurring_detail_reference' => 'some_ref',
+                'recurring_detail_reference' => 'some_ref'
             ];
 
         $response = $this->gateway->purchase($payment_parms)->send();
@@ -134,7 +134,7 @@ class GatewayTest extends GatewayTestCase
         $response = $this->gateway->refund(
             [
                 'merchant_account' => 'some_merchant_account',
-                'transaction_id' => 'some_transaction_ref',
+                'transaction_id' => 'some_transaction_ref'
             ]
         )->send();
 
