@@ -95,7 +95,7 @@ class PaymentRequest extends AbstractRequest
     {
         $card = $this->getCard();
         $type = $this->getType();
-        
+
         if (!empty($type) && ($type == PaymentRequest::ONE_CLICK || $type == PaymentRequest::RECURRING)) {
             if (empty($card->getEmail())
                 || empty($card->getShopperReference())
