@@ -10,7 +10,7 @@ use Omnipay\Tests\TestCase;
  */
 class PaymentRequestTest extends TestCase
 {
-    public function setUp()
+    private function getStandardRequest()
     {
         $this->request = new PaymentRequest(
             $this->getHttpClient(),
@@ -18,8 +18,101 @@ class PaymentRequestTest extends TestCase
         );
 
         $request_params = array_merge(
-            $this->getPaymentParams(),
+            $this->getStandardPaymentParams(),
             [
+                'test_mode' => true,
+                'username' => 'some_username',
+                'password' => 'some_password',
+                'merchant_account' => 'some_merchant_account'
+            ]
+        );
+
+        $this->request->initialize(
+            $request_params
+        );
+    }
+
+    private function getInitialOneClickRequest()
+    {
+        $this->request = new PaymentRequest(
+            $this->getHttpClient(),
+            $this->getHttpRequest()
+        );
+
+        $request_params = array_merge(
+            $this->getStandardPaymentParams(),
+            [
+                'type' => PaymentRequest::ONE_CLICK,
+                'test_mode' => true,
+                'username' => 'some_username',
+                'password' => 'some_password',
+                'merchant_account' => 'some_merchant_account'
+            ]
+        );
+
+        $this->request->initialize(
+            $request_params
+        );
+    }
+
+    private function getInitialRecurringRequest()
+    {
+        $this->request = new PaymentRequest(
+            $this->getHttpClient(),
+            $this->getHttpRequest()
+        );
+
+        $request_params = array_merge(
+            $this->getStandardPaymentParams(),
+            [
+                'type' => PaymentRequest::RECURRING,
+                'test_mode' => true,
+                'username' => 'some_username',
+                'password' => 'some_password',
+                'merchant_account' => 'some_merchant_account'
+            ]
+        );
+
+        $this->request->initialize(
+            $request_params
+        );
+    }
+
+
+    private function getSuccessiveOneClickRequest()
+    {
+        $this->request = new PaymentRequest(
+            $this->getHttpClient(),
+            $this->getHttpRequest()
+        );
+
+        $request_params = array_merge(
+            $this->getSuccessiveOneClickParams(),
+            [
+                'type' => PaymentRequest::ONE_CLICK,
+                'test_mode' => true,
+                'username' => 'some_username',
+                'password' => 'some_password',
+                'merchant_account' => 'some_merchant_account'
+            ]
+        );
+
+        $this->request->initialize(
+            $request_params
+        );
+    }
+
+    private function getSuccessiveRecurringRequest()
+    {
+        $this->request = new PaymentRequest(
+            $this->getHttpClient(),
+            $this->getHttpRequest()
+        );
+
+        $request_params = array_merge(
+            $this->getSuccessiveOneClickParams(),
+            [
+                'type' => PaymentRequest::RECURRING,
                 'test_mode' => true,
                 'username' => 'some_username',
                 'password' => 'some_password',
@@ -37,7 +130,7 @@ class PaymentRequestTest extends TestCase
      *
      * @return array
      */
-    private function getPaymentParams()
+    private function getStandardPaymentParams()
     {
         return [
             'amount' => '1.99',
@@ -61,14 +154,33 @@ class PaymentRequestTest extends TestCase
         ];
     }
 
+    private function getSuccessiveOneClickParams()
+    {
+        return [
+            'amount' => '1.99',
+            'currency' => 'EUR',
+            'transaction_reference' => '123',
+            'recurring_detail_reference' => '456',
+            'card' => new CreditCard(
+                [
+                    'cvv' => '111',
+                    'email' => 'some@gmail.com',
+                    'shopper_reference' => '123654'
+                ]
+            )
+        ];
+    }
+
     public function testGetAmountCovertsToMinorUnits()
     {
+        $this->getStandardRequest();
         $this->request->setAmount('10.99');
         $this->assertEquals('1099', $this->request->getAmount());
     }
 
     public function testGetEndpointReturnsTestIfTestMode()
     {
+        $this->getStandardRequest();
         $this->request->setTestMode(true);
         $this->assertEquals(
             $this->request->getEndPoint(),
@@ -78,6 +190,7 @@ class PaymentRequestTest extends TestCase
 
     public function testGetEndpointReturnsLiveIfNoTestMode()
     {
+        $this->getStandardRequest();
         $this->request->setTestMode(false);
         $this->assertEquals(
             $this->request->getEndPoint(),
@@ -85,8 +198,9 @@ class PaymentRequestTest extends TestCase
         );
     }
 
-    public function testGetDataReturnsExpectedFieldsAndValues()
+    public function testGetDataReturnsExpectedFieldsAndValuesForStandardPayment()
     {
+        $this->getStandardRequest();
         $expected = [
             'action' => 'Payment.authorise',
             'paymentRequest.merchantAccount' => 'some_merchant_account',
@@ -102,6 +216,80 @@ class PaymentRequestTest extends TestCase
             'paymentRequest.card.billingAddress.stateOrProvince' => 'Ille dfrance',
             'paymentRequest.card.billingAddress.country' => 'FR',
             'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish'
+        ];
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
+
+    public function testGetDataReturnsExpectedFieldsAndValuesForInitialOneClickPayment()
+    {
+        $this->getInitialOneClickRequest();
+        $expected = [
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => 'some_merchant_account',
+            'paymentRequest.amount.currency' => 'EUR',
+            'paymentRequest.amount.value' => 199,
+            'paymentRequest.reference' => '123',
+            'paymentRequest.shopperEmail' => 'some@gmail.com',
+            'paymentRequest.shopperReference' => '123654',
+            'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
+            'paymentRequest.recurring.contract' => 'ONECLICK'
+        ];
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
+
+    public function testGetDataReturnsExpectedFieldsAndValuesForSuccessiveOneClickPayment()
+    {
+        $this->getSuccessiveOneClickRequest();
+        $expected = [
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => 'some_merchant_account',
+            'paymentRequest.amount.currency' => 'EUR',
+            'paymentRequest.amount.value' => 199,
+            'paymentRequest.reference' => '123',
+            'paymentRequest.shopperEmail' => 'some@gmail.com',
+            'paymentRequest.shopperReference' => '123654',
+            'paymentRequest.selectedRecurringDetailReference' => '456',
+            'paymentRequest.card.cvc' => '111',
+            'paymentRequest.recurring.contract' => 'ONECLICK'
+        ];
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
+
+    public function testGetDataReturnsExpectedFieldsAndValuesForInitialRecurringPayment()
+    {
+        $this->getInitialRecurringRequest();
+        $expected = [
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => 'some_merchant_account',
+            'paymentRequest.amount.currency' => 'EUR',
+            'paymentRequest.amount.value' => 199,
+            'paymentRequest.reference' => '123',
+            'paymentRequest.shopperEmail' => 'some@gmail.com',
+            'paymentRequest.shopperReference' => '123654',
+            'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
+            'paymentRequest.recurring.contract' => 'RECURRING'
+        ];
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
+
+    public function testGetDataReturnsExpectedFieldsAndValuesForSuccessiveRecurringPayment()
+    {
+        $this->getSuccessiveRecurringRequest();
+        $expected = [
+            'action' => 'Payment.authorise',
+            'paymentRequest.merchantAccount' => 'some_merchant_account',
+            'paymentRequest.amount.currency' => 'EUR',
+            'paymentRequest.amount.value' => 199,
+            'paymentRequest.reference' => '123',
+            'paymentRequest.shopperEmail' => 'some@gmail.com',
+            'paymentRequest.shopperReference' => '123654',
+            'paymentRequest.selectedRecurringDetailReference' => 'LATEST',
+            'paymentRequest.recurring.contract' => 'RECURRING',
+            'paymentRequest.shopperInteraction' => 'ContAuth'
         ];
 
         $this->assertEquals($expected, $this->request->getData());

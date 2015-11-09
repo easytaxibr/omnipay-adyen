@@ -63,42 +63,48 @@ class GatewayTest extends GatewayTestCase
         $this->assertOneClickResponseIsCorrect($response);
     }
 
-    public function testInitialOneClickPurchaseWithAuthorisedTransaction()
+    /**
+     * @dataProvider typeProvider
+     */
+    public function testInitialSavedCardPurchaseWithAuthorisedTransaction($type)
     {
         $this->setMockHttpResponse('authorisedPayment.txt');
-        $payment_parms = $this->getPaymentParams() + [
-            'type' => 'ONECLICK',
-        ];
+        $payment_params = $this->getPaymentParams() + [
+                'type' => $type,
+            ];
 
-        $response = $this->gateway->purchase($payment_parms)->send();
-
+        $response = $this->gateway->purchase($payment_params)->send();
         $this->assertOneClickResponseIsCorrect($response);
     }
 
-    public function testSuccessiveOneClickPurchaseWithAuthorisedTransaction()
+    /**
+     * @dataProvider typeProvider
+     */
+    public function testSuccessiveSavedCardPurchaseWithAuthorisedTransaction($type)
     {
         $this->setMockHttpResponse('authorisedPayment.txt');
-        $payment_parms = $this->getPaymentParams() + [
-                'type' => 'ONECLICK',
-                'recurring_detail_reference' => 'some_ref'
-            ];
-
-        $response = $this->gateway->purchase($payment_parms)->send();
+        $payment_params = $this->getPaymentParams() + [
+            'type' => $type,
+            'recurring_detail_reference' => 'some_ref'
+        ];
+        $payment_params['card']->setEncryptedCardData('');
+        $response = $this->gateway->purchase($payment_params)->send();
 
         $this->assertOneClickResponseIsCorrect($response);
     }
 
     /**
+     * @dataProvider typeProvider
      * @expectedException \Omnipay\Common\Exception\InvalidRequestException
      * @expectedExceptionMessage One Click and/or Recurring Payments require the email and shopper reference
      */
-    public function testOneClickPurchaseWithoutRequiredParamsThrowsException()
+    public function testSavedCardPurchaseWithoutRequiredParamsThrowsException($type)
     {
         $this->setMockHttpResponse('authorisedPayment.txt');
-        $payment_parms = $this->getPaymentParams() + ['type' => 'ONECLICK'];
-        $payment_parms['card']->setEmail('');
+        $payment_params = $this->getPaymentParams() + ['type' => $type];
+        $payment_params['card']->setEmail('');
 
-        $this->gateway->purchase($payment_parms)->send();
+        $this->gateway->purchase($payment_params)->send();
     }
 
     public function testPurchaseWithRefusedTransaction()
@@ -200,5 +206,16 @@ class GatewayTest extends GatewayTestCase
             '123456',
             $response->getCode()
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function typeProvider()
+    {
+        return [
+            ['ONECLICK'],
+            ['RECURRING']
+        ];
     }
 }

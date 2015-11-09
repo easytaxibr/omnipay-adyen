@@ -14,6 +14,7 @@ class PaymentRequest extends AbstractRequest
     use GatewayAccessorTrait;
 
     const ONE_CLICK = 'ONECLICK';
+    const RECURRING = 'RECURRING';
 
     /**
      * Sets the type of payment eg. one click
@@ -94,8 +95,8 @@ class PaymentRequest extends AbstractRequest
     {
         $card = $this->getCard();
         $type = $this->getType();
-
-        if (!empty($type) && $type == PaymentRequest::ONE_CLICK) {
+        
+        if (!empty($type) && ($type == PaymentRequest::ONE_CLICK || $type == PaymentRequest::RECURRING)) {
             if (empty($card->getEmail())
                 || empty($card->getShopperReference())
             ) {
@@ -106,9 +107,9 @@ class PaymentRequest extends AbstractRequest
             $payment_params = ['paymentRequest.recurring.contract' => $type];
             $recurring_detail_reference = $this->getRecurringDetailReference();
             if (empty($recurring_detail_reference)) {
-                $this->addInitialOneClickPaymentParams($card, $payment_params);
+                $this->addInitialSavedCardPaymentParams($card, $payment_params);
             } else {
-                $this->addSuccessiveOneClickPaymentParams($card, $payment_params);
+                $this->addSuccessiveSavedCardPaymentParams($type, $card, $payment_params);
             }
 
         } else {
@@ -151,7 +152,7 @@ class PaymentRequest extends AbstractRequest
      * @param \Omnipay\Adyen\Message\CreditCard $card
      * @param array $payment_params
      */
-    protected function addInitialOneClickPaymentParams($card, array &$payment_params)
+    protected function addInitialSavedCardPaymentParams($card, array &$payment_params)
     {
         $payment_params['paymentRequest.additionalData.card.encrypted.json'] =
             $card->getAdyenCardData();
@@ -160,16 +161,25 @@ class PaymentRequest extends AbstractRequest
     /**
      * Applies the payment parameters for successive one click payments
      *
+     * @param string $type
      * @param \Omnipay\Adyen\Message\CreditCard $card
      * @param array $payment_params
      */
-    protected function addSuccessiveOneClickPaymentParams($card, array &$payment_params)
+    protected function addSuccessiveSavedCardPaymentParams($type, $card, array &$payment_params)
     {
-        $payment_params += [
-            'paymentRequest.selectedRecurringDetailReference' =>
-                $this->getRecurringDetailReference(),
-            'paymentRequest.card.cvc' => $card->getCvv()
-        ];
+        if ($type == self::ONE_CLICK) {
+            $payment_params += [
+                'paymentRequest.selectedRecurringDetailReference' =>
+                    $this->getRecurringDetailReference(),
+                'paymentRequest.card.cvc' => $card->getCvv()
+            ];
+        } elseif ($type == self::RECURRING) {
+            $payment_params +=
+                [
+                    "paymentRequest.shopperInteraction" => "ContAuth",
+                    'paymentRequest.selectedRecurringDetailReference' => 'LATEST'
+                ];
+        }
     }
 
     /**
