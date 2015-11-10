@@ -57,6 +57,26 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
+     * Optional: Sets 3d secure to enabled/disabled status
+     *
+     * @param boolean $value
+     */
+    public function set3dSecure($value)
+    {
+        $this->setParameter('3d_secure', $value);
+    }
+
+    /**
+     * Returns the whether 3D Secure is enabled
+     *
+     * @return string
+     */
+    public function get3dSecure()
+    {
+        return $this->getParameter('3d_secure');
+    }
+
+    /**
      * Converts a price to minor unit
      *
      * @param int $amount
@@ -213,14 +233,23 @@ class PaymentRequest extends AbstractRequest
      */
     protected function applyCommonPaymentParams($card, array $payment_params)
     {
-        return $payment_params += [
+        $payment_params += [
             'action' => 'Payment.authorise',
             'paymentRequest.merchantAccount' => $this->getMerchantAccount(),
             'paymentRequest.amount.currency' => $this->getCurrency(),
             'paymentRequest.amount.value' => $this->getAmount(),
             'paymentRequest.reference' => $this->getTransactionReference(),
             'paymentRequest.shopperEmail' => $card->getEmail(),
-            'paymentRequest.shopperReference' => $card->getShopperReference(),
+            'paymentRequest.shopperReference' => $card->getShopperReference()
         ];
+
+        if ($this->get3dSecure()) {
+            $payment_params += [
+                'paymentRequest.browserInfo.userAgent' => $this->getHttpUserAgent(),
+                'paymentRequest.browserInfo.acceptHeader' => $this->getHttpAccept()
+            ];
+        }
+
+        return $payment_params;
     }
 }

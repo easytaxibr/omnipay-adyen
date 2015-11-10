@@ -18,6 +18,11 @@ class GatewayTest extends GatewayTestCase
             $this->getHttpClient(),
             $this->getHttpRequest()
         );
+        $_SERVER = [
+            'HTTP_USER_AGENT' => 'some_agent',
+            'HTTP_ACCEPT' => 'accept',
+            'REMOTE_ADDR' => '127.0.0.1'
+        ];
     }
 
     /**
@@ -206,6 +211,45 @@ class GatewayTest extends GatewayTestCase
             '123456',
             $response->getCode()
         );
+    }
+
+    public function testIsRedirectIf3DSecureIsNeeded()
+    {
+        $this->setMockHttpResponse('redirectNeeded.txt');
+
+        $payment_parms = $this->getPaymentParams() + ['3d_secure' => 'true'];
+
+        $response = $this->gateway->purchase($payment_parms)->send();
+
+        $this->assertInstanceOf(
+            PaymentResponse::class,
+            $response
+        );
+        $this->assertFalse($response->isSuccessful());
+        $this->assertTrue($response->isRedirect());
+    }
+
+    public function testCompletePurchase()
+    {
+        $this->getHttpRequest()->request->set(
+            'MD',
+            '123654'
+        );
+
+        $this->getHttpRequest()->request->set(
+            'PaRes',
+            'Some_response'
+        );
+        $this->setMockHttpResponse('authorisedPayment.txt');
+
+        $response = $this->gateway->completePurchase(['server_info' => $_SERVER])->send();
+
+        $this->assertInstanceOf(
+            PaymentResponse::class,
+            $response
+        );
+        $this->assertTrue($response->isSuccessful());
+        $this->assertFalse($response->isRedirect());
     }
 
     /**
