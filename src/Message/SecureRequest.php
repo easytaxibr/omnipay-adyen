@@ -2,41 +2,14 @@
 
 namespace Omnipay\Adyen\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Adyen\Message\PaymentRequest;
 
 /**
  * Class SecureRequest - Used to make a 3D secure request
  * @package Omnipay\Adyen\Message
  */
-class SecureRequest extends AbstractRequest
+class SecureRequest extends PaymentRequest
 {
-    use GatewayAccessorTrait;
-
-    /**
-     * Does the 3d secure request to adyen server,
-     * and returns a PaymentResponse object
-     *
-     * @param array $data
-     * @return PaymentResponse
-     * @throws \Omnipay\Common\Exception\InvalidRequestException
-     */
-    public function sendData($data)
-    {
-        $response = $this->httpClient->post(
-            $this->getEndpoint(),
-            [],
-            http_build_query($data),
-            [
-                'auth' => [$this->getUsername(),$this->getPassword()]
-            ]
-        )->send();
-
-        $response_data = [];
-        parse_str($response->getBody(true), $response_data);
-
-        return $this->response = new PaymentResponse($this, $response_data);
-    }
-
     /**
      * Returns the data required for the request
      * to be created
