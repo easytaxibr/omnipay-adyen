@@ -2,13 +2,13 @@
 
 namespace Omnipay\Adyen\Message;
 
-use Omnipay\Adyen\Message\PaymentRequest;
+use Omnipay\Adyen\Message\BaseRequest;
 
 /**
  * Class SecureRequest - Used to make a 3D secure request
  * @package Omnipay\Adyen\Message
  */
-class SecureRequest extends PaymentRequest
+class SecureRequest extends BaseRequest
 {
     /**
      * Returns the data required for the request

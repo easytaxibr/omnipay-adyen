@@ -3,6 +3,8 @@ namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardResponse;
 use Omnipay\Adyen\Message\CreditCard;
+use Omnipay\Adyen\Message\AuthorizeRequest;
+use Omnipay\Adyen\Message\AuthorizeResponse;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
@@ -52,6 +54,28 @@ class GatewayTest extends GatewayTestCase
                 ]
             )
         ];
+    }
+
+    private function getAuthorizeParams()
+    {
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        return [
+            'test_mode' => true,
+            'username' => 'some_username',
+            'password' => 'some_password',
+            'merchant_account' => 'some_merchant_account',
+            'first_name' => 'Sally',
+            'last_name' => 'Jones',
+            'security_number' => '818.098.848-10',
+            'delivery_days' => '7',
+            'shopper_email' => 'sjones@test.com',
+            'shopper_reference' => '2468',
+            'amount' => '1.99',
+            'currency' => 'EUR',
+            'transaction_reference' => '123'
+        ] + $_SERVER;
+
     }
 
     public function testPurchaseReturnsCorrectClass()
@@ -261,5 +285,18 @@ class GatewayTest extends GatewayTestCase
             ['ONECLICK'],
             ['RECURRING']
         ];
+    }
+
+    public function testAuthroizeReturnsCorrectClass()
+    {
+        $request = $this->gateway->authorize($this->getAuthorizeParams());
+        $this->assertInstanceOf(AuthorizeRequest::class, $request);
+    }
+
+    public function testAuthroizeReturnsCorrectResponseClass()
+    {
+        $this->setMockHttpResponse('authorisedPayment.txt');
+        $request = $this->gateway->authorize($this->getAuthorizeParams())->send();
+        $this->assertInstanceOf(AuthorizeResponse::class, $request);
     }
 }

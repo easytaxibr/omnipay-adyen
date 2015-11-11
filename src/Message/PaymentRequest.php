@@ -3,16 +3,14 @@
 namespace Omnipay\Adyen\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
-use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Adyen\Message\BaseRequest;
 
 /**
  * Class Request
  * @package Omnipay\Adyen
  */
-class PaymentRequest extends AbstractRequest
+class PaymentRequest extends BaseRequest
 {
-    use GatewayAccessorTrait;
-
     const ONE_CLICK = 'ONECLICK';
     const RECURRING = 'RECURRING';
 
@@ -77,34 +75,6 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
-     * Converts a price to minor unit
-     *
-     * @param int $amount
-     * @param int $decimal_length
-     * @return int
-     */
-    private function convertPriceToMinorUnits($amount, $decimal_length)
-    {
-        //Wrapping in string to preserve the decimals
-        $amount = (("{$amount}") * (pow(10, $decimal_length)));
-        return intval("$amount");
-    }
-
-    /**
-     * OVERRIDE: Format an amount to minor units
-     *
-     * @param int|float $amount
-     * @return int
-     */
-    public function formatCurrency($amount)
-    {
-        return $this->convertPriceToMinorUnits(
-            $amount,
-            $this->getCurrencyDecimalPlaces()
-        );
-    }
-
-    /**
      * Returns the data required for the request
      * to be created
      *
@@ -139,31 +109,6 @@ class PaymentRequest extends AbstractRequest
         $payment_params = $this->applyCommonPaymentParams($card, $payment_params);
 
         return $payment_params;
-    }
-
-    /**
-     * Does the request to adyen server, and returns a
-     * Response object
-     *
-     * @param array $data
-     * @return PaymentResponse
-     * @throws \Omnipay\Common\Exception\InvalidRequestException
-     */
-    public function sendData($data)
-    {
-        $response = $this->httpClient->post(
-            $this->getEndpoint(),
-            [],
-            http_build_query($data),
-            [
-                'auth' => [$this->getUsername(), $this->getPassword()]
-            ]
-        )->send();
-
-        $response_data = [];
-        parse_str($response->getBody(true), $response_data);
-
-        return $this->response = new PaymentResponse($this, $response_data);
     }
 
     /**
@@ -233,12 +178,8 @@ class PaymentRequest extends AbstractRequest
      */
     protected function applyCommonPaymentParams($card, array $payment_params)
     {
+        $payment_params += parent::applyBaseRequestParams($payment_params);
         $payment_params += [
-            'action' => 'Payment.authorise',
-            'paymentRequest.merchantAccount' => $this->getMerchantAccount(),
-            'paymentRequest.amount.currency' => $this->getCurrency(),
-            'paymentRequest.amount.value' => $this->getAmount(),
-            'paymentRequest.reference' => $this->getTransactionReference(),
             'paymentRequest.shopperEmail' => $card->getEmail(),
             'paymentRequest.shopperReference' => $card->getShopperReference()
         ];

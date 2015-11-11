@@ -4,6 +4,7 @@ namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardRequest;
 use Omnipay\Adyen\Message\GatewayAccessorTrait;
+use Omnipay\Adyen\Message\AuthorizeRequest;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\RefundRequest;
 use Omnipay\Adyen\Message\SecureRequest;
@@ -43,7 +44,7 @@ class Gateway extends AbstractGateway
     }
 
     /**
-     * Returns a purchase (authorisation) request
+     * Returns a purchase request
      *
      * @param array $data
      * @return \Omnipay\Adyen\Message\PaymentRequest
@@ -52,6 +53,20 @@ class Gateway extends AbstractGateway
     {
         return $this->createRequest(
             PaymentRequest::class,
+            $data
+        );
+    }
+
+    /**
+     * Returns an authorisation request for boleto currency
+     *
+     * @param array $data
+     * @return \Omnipay\Adyen\Message\AuthorizeRequest
+     */
+    public function authorize(array $data = [])
+    {
+        return $this->createRequest(
+            AuthorizeRequest::class,
             $data
         );
     }
