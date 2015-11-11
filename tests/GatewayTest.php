@@ -67,7 +67,7 @@ class GatewayTest extends GatewayTestCase
             'merchant_account' => 'some_merchant_account',
             'first_name' => 'Sally',
             'last_name' => 'Jones',
-            'security_number' => '818.098.848-10',
+            'social_security_number' => '818.098.848-10',
             'delivery_days' => '7',
             'shopper_email' => 'sjones@test.com',
             'shopper_reference' => '2468',
@@ -295,7 +295,7 @@ class GatewayTest extends GatewayTestCase
 
     public function testAuthroizeReturnsCorrectResponseClass()
     {
-        $this->setMockHttpResponse('authorisedPayment.txt');
+        $this->setMockHttpResponse('boletoTransaction.txt');
         $request = $this->gateway->authorize($this->getAuthorizeParams())->send();
         $this->assertInstanceOf(AuthorizeResponse::class, $request);
     }

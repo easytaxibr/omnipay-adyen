@@ -17,10 +17,10 @@ class AuthorizeRequest extends BaseRequest
      *
      * @param boolean $value
      */
-    public function setSecurityNumber($value)
+    public function setSocialSecurityNumber($value)
     {
         $value = preg_replace('/\D/', '', $value);
-        $this->setParameter('security_number', $value);
+        $this->setParameter('social_security_number', $value);
     }
 
     /**
@@ -28,9 +28,9 @@ class AuthorizeRequest extends BaseRequest
      *
      * @return string
      */
-    public function getSecurityNumber()
+    public function getSocialSecurityNumber()
     {
-        return $this->getParameter('security_number');
+        return $this->getParameter('social_security_number');
     }
 
     /**
@@ -74,9 +74,9 @@ class AuthorizeRequest extends BaseRequest
     }
 
 
-    public function validateSecurityNumber()
+    public function validateSocialSecurityNumber()
     {
-        return CpfAndCnpjValidator::isValid($this->getSecurityNumber());
+        return CpfAndCnpjValidator::isValid($this->getSocialSecurityNumber());
     }
 
     /**
@@ -120,8 +120,9 @@ class AuthorizeRequest extends BaseRequest
     }
 
     /**
-     * Sets the delivery days.
-     * This is the number of days a user will be have to complete the transaction
+     * Optional: Sets the delivery days.
+     * This is the number of days a user will be have to complete the transaction.
+     * If not set Adyen's System will set deliveryDate to today + 5 days
      *
      * @param string $value
      */
@@ -140,6 +141,11 @@ class AuthorizeRequest extends BaseRequest
         return $this->getParameter('delivery_days');
     }
 
+    /**
+     * Returns ISO 8601 formatted deliveryDate
+     *
+     * @return string
+     */
     public function formatDeliveryDate()
     {
         return date(
@@ -164,14 +170,14 @@ class AuthorizeRequest extends BaseRequest
      */
     public function getData()
     {
-        if ($this->validateSecurityNumber()) {
+        if ($this->validateSocialSecurityNumber()) {
             $payment_params = [
                "paymentRequest.shopperEmail" => $this->getShopperEmail(),
                "paymentRequest.shopperReference" => $this->getShopperReference(),
                "paymentRequest.shopperIP" => $this->getRemoteAddr(),
                "paymentRequest.shopperName.firstName" => $this->getFirstName(),
                "paymentRequest.shopperName.lastName" => $this->getLastName(),
-               "paymentRequest.socialSecurityNumber" => $this->getSecurityNumber(),
+               "paymentRequest.socialSecurityNumber" => $this->getSocialSecurityNumber(),
                "paymentRequest.selectedBrand" => 'boletobancario_santander',
                "paymentRequest.deliveryDate" => $this->formatDeliveryDate(),
             ];
@@ -186,10 +192,10 @@ class AuthorizeRequest extends BaseRequest
 
     /**
      * Does the request to adyen server, and returns a
-     * Response object
+     * AuthorizeResponse object
      *
      * @param array $data
-     * @return PaymentResponse
+     * @return AuthorizeResponse
      * @throws \Omnipay\Common\Exception\InvalidRequestException
      */
     public function sendData($data)

@@ -27,7 +27,7 @@ class AuthorizeRequestTest extends TestCase
                 'merchant_account' => 'some_merchant_account',
                 'first_name' => 'Sally',
                 'last_name' => 'Jones',
-                'security_number' => '818.098.848-10',
+                'social_security_number' => '818.098.848-10',
                 'delivery_days' => '7',
                 'shopper_email' => 'sjones@test.com',
                 'shopper_reference' => '2468',
@@ -45,7 +45,7 @@ class AuthorizeRequestTest extends TestCase
             'action' => 'Payment.authorise',
             'paymentRequest.merchantAccount' => 'some_merchant_account',
             'paymentRequest.amount.currency' => 'EUR',
-            'paymentRequest.amount.value' => '199',
+            'paymentRequest.amount.value' => 199,
             'paymentRequest.reference' => '123',
             "paymentRequest.shopperEmail" => 'sjones@test.com',
             "paymentRequest.shopperReference" => '2468',
@@ -65,7 +65,7 @@ class AuthorizeRequestTest extends TestCase
     **/
     public function testGetDataThrowsErrorWhenSecurityNumberIsInvalid()
     {
-        $this->request->setSecurityNumber('121.131');
+        $this->request->setSocialSecurityNumber('121.131');
         $this->request->getData();
     }
 }
