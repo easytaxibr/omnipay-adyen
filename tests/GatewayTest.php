@@ -3,6 +3,7 @@ namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardResponse;
 use Omnipay\Adyen\Message\CreditCard;
+use Omnipay\Adyen\Message\NotificationResponse;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
@@ -252,6 +253,22 @@ class GatewayTest extends GatewayTestCase
         $this->assertFalse($response->isRedirect());
     }
 
+    public function testCompleteAuthorize()
+    {
+        $response = $this->gateway->completeAuthorize(
+            [
+                'raw_data' => $this->getRawNotificationString()
+            ]
+        )->send();
+
+        $this->assertInstanceOf(
+            NotificationResponse::class,
+            $response
+        );
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals('29625848', $response->getTransactionReference());
+    }
+
     /**
      * @return array
      */
@@ -261,5 +278,15 @@ class GatewayTest extends GatewayTestCase
             ['ONECLICK'],
             ['RECURRING']
         ];
+    }
+
+    /**
+     * Returns the raw notification string
+     *
+     * @return string
+     */
+    private function getRawNotificationString()
+    {
+        return 'originalReference=&reason=&additionalData.boletobancario.url=https%3A%2F%2Flive.adyen.com%2Fhpp%2FgenerationBoleto.shtml%3Fdata%3DBQABAQAVCvpDg5OvfiSeYwiM71K19wWHs3wsCUBaQGmSBGfzxWlGl5drRrN9fFH%252FBPZuI3XXjPNRGJad5w177%252F%252Bvw7AQnZXozTKBBrX2A4%252FFSqcuEZd4u0EbLcExrhYaVTJaTAnbRq9nSnqNR6vRL1HHCutHrC5rrhBYX%252BRc3doX5Up9WQHC1Q04OPtETx9%252F0BVn6G3Ei8wb2Uo1f8VWMv1qjRJW7ZHoIzE3Jolde%252FCp1CKNP7y6%252BqtwCy6dTJOPJ50QHqxnPdxlmanhMsKDLG75Q5XJulF3bOSdfhgNpvfj866WFNhKpdfgaMey0hv%252BmRHQGQ6CYShMjXZe2GwAkJl%252Bl%252BtMEHQpox7hvjqhSqbrxHatsNQAAL%252FTKBBhtA9hJh51scQ6BeGhUgqtfQT%252BbPc4cF2GeZ0XXhyqcpw1OJm%252BkzPimJKJKUpOLmR0crPEMN55yf7RiLkU8T0GMrURfTvRMJlafq2RTiapkKdl7RdTmdlje0jW9gdFdeldEtQh8G%252Bk0oWksCxd8X0QNx6g2NwnbjrDj6qdSih%252BNi6tcRRp76yoQtDJIiC9KrP2ClNdaDvOEzH3DtaUmBjRMpJ7BhwNPPV%252FRnVlPE%252F4DHQUA7SFC8G6UfBqnjyGzRkikvDNlv6idrRhOeBTCVsjXx1T2SDXT2uigBjVYOu13VFP88jAsDZ90egLLPCpzQ0vRLOFcoATEtrnEuHB0pq6PBN0U9TjC83iW9oUdLGCudgCgtaj&merchantAccountCode=YourMerchantAccount&eventCode=PENDING&operations=&additionalData.boletobancario.barCodeReference=00190.00009+02304.599778+25089.231184+6+66140000000690&additionalData.boletobancario.data=BQABAQAVCvpDg5OvfiSeYwiM71K19wWHs3wsCUBaQGmSBGfzxWlGl5drRrN9fFH%2FBPZuI3XXjPNRGJad5w177%2F%2Bvw7AQnZXozTKBBrX2A4%2FFSqcuEZd4u0EbLcExrhYaVTJaTAnbRq9nSnqNR6vRL1HHCutHrC5rrhBYX%2BRc3doX5Up9WQHC1Q04OPtETx9%2F0BVn6G3Ei8wb2Uo1f8VWMv1qjRJW7ZHoIzE3Jolde%2FCp1CKNP7y6%2BqtwCy6dTJOPJ50QHqxnPdxlmanhMsKDLG75Q5XJulF3bOSdfhgNpvfj866WFNhKpdfgaMey0hv%2BmRHQGQ6CYShMjXZe2GwAkJl%2Bl%2BtMEHQpox7hvjqhSqbrxHatsNQAAL%2FTKBBhtA9hJh51scQ6BeGhUgqtfQT%2BbPc4cF2GeZ0XXhyqcpw1OJm%2BkzPimJKJKUpOLmR0crPEMN55yf7RiLkU8T0GMrURfTvRMJlafq2RTiapkKdl7RdTmdlje0jW9gdFdeldEtQh8G%2Bk0oWksCxd8X0QNx6g2NwnbjrDj6qdSih%2BNi6tcRRp76yoQtDJIiC9KrP2ClNdaDvOEzH3DtaUmBjRMpJ7BhwNPPV%2FRnVlPE%2F4DHQUA7SFC8G6UfBqnjyGzRkikvDNlv6idrRhOeBTCVsjXx1T2SDXT2uigBjVYOu13VFP88jAsDZ90egLLPCpzQ0vRLOFcoATEtrnEuHB0pq6PBN0U9TjC83iW9oUdLGCudgCgtaj&success=true&paymentMethod=boletobancario_bancodobrasil&currency=BRL&additionalData.boletobancario.dueDate=2015-11-16&pspReference=1714472508923619&merchantReference=29625848&value=690&additionalData.boletobancario.expirationDate=2015-12-01&live=true&eventDate=2015-11-11T14%3A08%3A12.54Z&additionalData.acquirerReference=23045997725089231';
     }
 }

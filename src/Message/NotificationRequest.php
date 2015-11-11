@@ -10,11 +10,23 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class NotificationRequest extends AbstractRequest
 {
+    use GatewayAccessorTrait;
+
+    /**
+     * Sets the raw data recieved in the notification
+     *
+     * @param string $raw_data
+     */
     public function setRawData($raw_data)
     {
         $this->setParameter('raw_data', $raw_data);
     }
 
+    /**
+     * Returns the raw notification data
+     *
+     * @return string
+     */
     public function getRawData()
     {
         return $this->getParameter('raw_data');
