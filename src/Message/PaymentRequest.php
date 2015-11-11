@@ -15,6 +15,7 @@ class PaymentRequest extends AbstractRequest
 
     const ONE_CLICK = 'ONECLICK';
     const RECURRING = 'RECURRING';
+    const ONE_CLICK_RECURRING = 'ONECLICK,RECURRING';
 
     /**
      * Sets the type of payment eg. one click
@@ -124,11 +125,13 @@ class PaymentRequest extends AbstractRequest
                     'One Click and/or Recurring Payments require the email and shopper reference'
                 );
             }
-            $payment_params = ['paymentRequest.recurring.contract' => $type];
             $recurring_detail_reference = $this->getRecurringDetailReference();
             if (empty($recurring_detail_reference)) {
+                $payment_params =
+                    ['paymentRequest.recurring.contract' => self::ONE_CLICK_RECURRING];
                 $this->addInitialSavedCardPaymentParams($card, $payment_params);
             } else {
+                $payment_params = ['paymentRequest.recurring.contract' => $type];
                 $this->addSuccessiveSavedCardPaymentParams($type, $card, $payment_params);
             }
 
