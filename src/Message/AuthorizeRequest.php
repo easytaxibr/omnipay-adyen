@@ -73,7 +73,6 @@ class AuthorizeRequest extends BaseRequest
         return $this->getParameter('last_name');
     }
 
-
     public function validateSocialSecurityNumber()
     {
         return CpfAndCnpjValidator::isValid($this->getSocialSecurityNumber());

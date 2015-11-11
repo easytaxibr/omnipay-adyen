@@ -48,7 +48,7 @@ class BaseRequestTest extends TestCase
     /**
      * @dataProvider adapterUnitsDataProvider
      */
-    public function testConvertPriceToMinorUnits($amount, $expected)
+    public function testFormatCurrency($amount, $expected)
     {
         $this->assertEquals($this->request->formatCurrency($amount), $expected);
     }
