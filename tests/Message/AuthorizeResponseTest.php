@@ -24,8 +24,10 @@ class AuthorizeResponseTest extends TestCase
      * @param string $result_code
      * @param  array $secure_data_info
      */
-    private function setResponse($result_url = 'https://test.adyen.com/hpp/generationBoleto.shtml', $result_code = 'Received')
-    {
+    private function setResponse(
+        $result_url = 'https://test.adyen.com/hpp/generationBoleto.shtml',
+        $result_code = 'Received'
+    ) {
         $this->response = new AuthorizeResponse(
             $this->request,
             [
@@ -96,6 +98,9 @@ class AuthorizeResponseTest extends TestCase
     public function testGetRedirctUrl()
     {
         $this->setResponse();
-        $this->assertEquals('https://test.adyen.com/hpp/generationBoleto.shtml', $this->response->getRedirectUrl());
+        $this->assertEquals(
+            'https://test.adyen.com/hpp/generationBoleto.shtml',
+            $this->response->getRedirectUrl()
+        );
     }
 }
