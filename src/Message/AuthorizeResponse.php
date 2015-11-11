@@ -58,7 +58,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getAdditionalData()
     {
-        return $this->data['additionalData.boletobancario.data'];
+        return $this->data['additionalData_boletobancario_data'];
     }
 
     /**
@@ -68,7 +68,8 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getRedirectUrl()
     {
-        return $this->data['additionalData.boletobancario.url'];
+
+        return $this->data['additionalData_boletobancario_url'];
     }
 
     /**
@@ -78,7 +79,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getExpirationDate()
     {
-        return $this->data['additionalData.boletobancario.expirationDate'];
+        return $this->data['additionalData_boletobancario_expirationDate'];
     }
 
     /**
@@ -88,6 +89,6 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getDueDate()
     {
-        return $this->data['additionalData.boletobancario.dueDate'];
+        return $this->data['additionalData_boletobancario_dueDate'];
     }
 }

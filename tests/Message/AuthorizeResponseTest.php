@@ -29,10 +29,10 @@ class AuthorizeResponseTest extends TestCase
         $this->response = new AuthorizeResponse(
             $this->request,
             [
-                'additionalData.boletobancario.url' => $result_url,
-                'additionalData.boletobancario.data' => 'Some_data',
-                'additionalData.boletobancario.expirationDate' => '2015-01-05',
-                'additionalData.boletobancario.dueDate' => '2015-01-01',
+                'additionalData_boletobancario_url' => $result_url,
+                'additionalData_boletobancario_data' => 'Some_data',
+                'additionalData_boletobancario_expirationDate' => '2015-01-05',
+                'additionalData_boletobancario_dueDate' => '2015-01-01',
                 'pspReference' => '8813760397300101',
                 'resultCode' => $result_code
             ]

@@ -296,7 +296,33 @@ class GatewayTest extends GatewayTestCase
     public function testAuthroizeReturnsCorrectResponseClass()
     {
         $this->setMockHttpResponse('boletoTransaction.txt');
-        $request = $this->gateway->authorize($this->getAuthorizeParams())->send();
-        $this->assertInstanceOf(AuthorizeResponse::class, $request);
+        $response = $this->gateway->authorize($this->getAuthorizeParams())->send();
+        $this->assertInstanceOf(AuthorizeResponse::class, $response);
+        $this->assertEquals(
+            $response->getRedirectUrl(),
+            'https://test.adyen.com/hpp/generationBoleto.shtml'
+        );
+    }
+
+    public function testAuthroizeReturnsCorrectData()
+    {
+        $this->setMockHttpResponse('boletoTransaction.txt');
+        $response = $this->gateway->authorize($this->getAuthorizeParams())->send();
+        $this->assertEquals(
+            $response->getRedirectUrl(),
+            'https://test.adyen.com/hpp/generationBoleto.shtml'
+        );
+        $this->assertEquals(
+            $response->getExpirationDate(),
+            '2013-08-19'
+        );
+        $this->assertEquals(
+            $response->getDueDate(),
+            '2013-08-12'
+        );
+        $this->assertEquals(
+            $response->getAdditionalData(),
+            'AgABAQClZUyg1NqsD7nN5X1uqN4mabJ7A3FH5LgAUbqDnJ6EAQlnSAVL u7eWIXY/'
+        );
     }
 }
