@@ -13,7 +13,7 @@ use Omnipay\Adyen\Helpers\CpfAndCnpjValidator;
 class AuthorizeRequest extends BaseRequest
 {
     /**
-     * Sets user's security number
+     * Sets user's social security number
      *
      * @param boolean $value
      */
@@ -24,7 +24,7 @@ class AuthorizeRequest extends BaseRequest
     }
 
     /**
-     * Gets user's security number
+     * Gets user's social security number
      *
      * @return string
      */
@@ -73,6 +73,11 @@ class AuthorizeRequest extends BaseRequest
         return $this->getParameter('last_name');
     }
 
+    /**
+     * Validates that the provided social security number matches expect Cpf/Cnpj format
+     *
+     * @return [type] [description]
+     */
     public function validateSocialSecurityNumber()
     {
         return CpfAndCnpjValidator::isValid($this->getSocialSecurityNumber());
@@ -99,7 +104,7 @@ class AuthorizeRequest extends BaseRequest
     }
 
     /**
-     * Sets the shopper reference
+     * Sets the shopper email
      *
      * @param string $value
      */
@@ -109,7 +114,7 @@ class AuthorizeRequest extends BaseRequest
     }
 
     /**
-     * Returns the shopper reference
+     * Returns the shopper email
      *
      * @return string
      */
@@ -143,21 +148,25 @@ class AuthorizeRequest extends BaseRequest
     /**
      * Returns ISO 8601 formatted deliveryDate
      *
-     * @return string
+     * @return string|null
      */
     public function formatDeliveryDate()
     {
-        return date(
-            'Y-m-d\Th:i:s:u',
-            mktime(
-                date("H"),
-                date("i"),
-                date("s"),
-                date("m"),
-                date("j") + $this->getDeliveryDays(),
-                date("Y")
-            )
-        );
+        if ($this->getDeliveryDays() !== null && !empty($this->getDeliveryDays())) {
+            return date(
+                'Y-m-d\Th:i:s:u',
+                mktime(
+                    date("H"),
+                    date("i"),
+                    date("s"),
+                    date("m"),
+                    date("j") + $this->getDeliveryDays(),
+                    date("Y")
+                )
+            );
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -178,7 +187,9 @@ class AuthorizeRequest extends BaseRequest
                "paymentRequest.shopperName.lastName" => $this->getLastName(),
                "paymentRequest.socialSecurityNumber" => $this->getSocialSecurityNumber(),
                "paymentRequest.selectedBrand" => 'boletobancario_santander',
-               "paymentRequest.deliveryDate" => $this->formatDeliveryDate(),
+               "paymentRequest.deliveryDate" => $this->formatDeliveryDate() !== null
+                    ? $this->formatDeliveryDate()
+                    : ''
             ];
             $payment_params += parent::applyBaseRequestParams($payment_params);
             return $payment_params;

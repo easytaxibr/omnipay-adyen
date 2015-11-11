@@ -58,7 +58,7 @@ class Gateway extends AbstractGateway
     }
 
     /**
-     * Returns an authorisation request for boleto currency
+     * Returns an authorization request for boleto payment type
      *
      * @param array $data
      * @return \Omnipay\Adyen\Message\AuthorizeRequest
