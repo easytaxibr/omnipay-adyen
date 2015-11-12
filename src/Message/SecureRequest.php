@@ -18,7 +18,7 @@ class SecureRequest extends BaseRequest
      */
     public function getData()
     {
-        $this->setResponseClass('Omnipay\Adyen\Message\PaymentResponse');
+        $this->setResponseClass(PaymentResponse::class);
         $returned_data = $this->httpRequest->request->all();
         return [
             "action" => "Payment.authorise3d",

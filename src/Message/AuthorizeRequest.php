@@ -83,26 +83,6 @@ class AuthorizeRequest extends BaseRequest
     }
 
     /**
-     * Sets the shopper reference
-     *
-     * @param string $reference
-     */
-    public function setShopperReference($reference)
-    {
-        $this->setParameter('shopper_reference', $reference);
-    }
-
-    /**
-     * Returns the shopper reference
-     *
-     * @return string
-     */
-    public function getShopperReference()
-    {
-        return $this->getParameter('shopper_reference');
-    }
-
-    /**
      * Sets the shopper email
      *
      * @param string $value
@@ -199,7 +179,7 @@ class AuthorizeRequest extends BaseRequest
      */
     public function getData()
     {
-        $this->setResponseClass('Omnipay\Adyen\Message\AuthorizeResponse');
+        $this->setResponseClass(AuthorizeResponse::class);
         if ($this->validateSocialSecurityNumber()) {
             $payment_params = [
                "paymentRequest.shopperEmail" => $this->getShopperEmail(),
