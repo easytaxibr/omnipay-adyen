@@ -161,4 +161,24 @@ trait GatewayAccessorTrait
     {
         return $this->getParameter('REMOTE_ADDR');
     }
+
+    /**
+     * Sets the shopper reference
+     *
+     * @param string $reference
+     */
+    public function setShopperReference($reference)
+    {
+        $this->setParameter('shopper_reference', $reference);
+    }
+
+    /**
+     * Returns the shopper reference
+     *
+     * @return string
+     */
+    public function getShopperReference()
+    {
+        return $this->getParameter('shopper_reference');
+    }
 }
