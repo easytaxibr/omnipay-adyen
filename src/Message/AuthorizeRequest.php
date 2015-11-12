@@ -169,6 +169,28 @@ class AuthorizeRequest extends BaseRequest
     }
 
     /**
+     * Defines a value for this field to specify how to process the transaction.
+     * For boleto payments, the corresponding value usually follows this format:
+     * boletobancario_<issuer_bank_name>
+     *
+     * @param string $value
+     */
+    public function setSelectedBrand($value)
+    {
+        $this->setParameter('selected_brand', $value);
+    }
+
+    /**
+     * Returns delivery days
+     *
+     * @return string
+     */
+    public function getSelectedBrand()
+    {
+        return $this->getParameter('selected_brand');
+    }
+
+    /**
      * Returns the data required for the request
      * to be created
      *
@@ -186,7 +208,7 @@ class AuthorizeRequest extends BaseRequest
                "paymentRequest.shopperName.firstName" => $this->getFirstName(),
                "paymentRequest.shopperName.lastName" => $this->getLastName(),
                "paymentRequest.socialSecurityNumber" => $this->getSocialSecurityNumber(),
-               "paymentRequest.selectedBrand" => 'boletobancario_santander',
+               "paymentRequest.selectedBrand" => $this->getSelectedBrand(),
                "paymentRequest.deliveryDate" => $this->formatDeliveryDate() !== null
                     ? $this->formatDeliveryDate()
                     : ''

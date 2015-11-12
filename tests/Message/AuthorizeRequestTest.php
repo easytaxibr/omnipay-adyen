@@ -33,7 +33,8 @@ class AuthorizeRequestTest extends TestCase
                 'shopper_reference' => '2468',
                 'amount' => '1.99',
                 'currency' => 'EUR',
-                'transaction_reference' => '123'
+                'transaction_reference' => '123',
+                'selected_brand' => 'boletobancario_santander'
             ]
             + $_SERVER
         );
