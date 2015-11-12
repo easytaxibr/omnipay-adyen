@@ -164,7 +164,7 @@ class PaymentRequestTest extends TestCase
             $this->getStandardPaymentDetails(),
             [
                 'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
-                'paymentRequest.recurring.contract' => PaymentRequest::ONE_CLICK
+                'paymentRequest.recurring.contract' => PaymentRequest::ONE_CLICK_RECURRING
             ]
         );
 
@@ -193,7 +193,7 @@ class PaymentRequestTest extends TestCase
             $this->getStandardPaymentDetails(),
             [
                 'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
-                'paymentRequest.recurring.contract' => 'RECURRING'
+                'paymentRequest.recurring.contract' => PaymentRequest::ONE_CLICK_RECURRING
             ]
         );
 

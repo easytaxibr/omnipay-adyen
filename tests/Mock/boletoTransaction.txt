@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Date: Tue, 03 Nov 2015 12:13:49 GMT
+Server: Apache
+Set-Cookie: Path=/pal/; Secure; HttpOnly
+Content-Length: 108
+Content-Type: text/plain; charset=UTF-8
+
+additionalData.boletobancario.url=https://test.adyen.com/hpp/generationBoleto.shtml&additionalData.boletobancario.data=AgABAQClZUyg1NqsD7nN5X1uqN4mabJ7A3FH5LgAUbqDnJ6EAQlnSAVL+u7eWIXY/&additionalData.boletobancario.expirationDate=2013-08-19&additionalData.boletobancario.dueDate=2013-08-12&pspReference=8813760397300101&resultCode=Received

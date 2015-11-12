@@ -3,7 +3,8 @@ namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardResponse;
 use Omnipay\Adyen\Message\CreditCard;
-use Omnipay\Adyen\Message\NotificationResponse;
+use Omnipay\Adyen\Message\AuthorizeRequest;
+use Omnipay\Adyen\Message\AuthorizeResponse;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
@@ -53,6 +54,28 @@ class GatewayTest extends GatewayTestCase
                 ]
             )
         ];
+    }
+
+    private function getAuthorizeParams()
+    {
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        return [
+            'test_mode' => true,
+            'username' => 'some_username',
+            'password' => 'some_password',
+            'merchant_account' => 'some_merchant_account',
+            'first_name' => 'Sally',
+            'last_name' => 'Jones',
+            'social_security_number' => '818.098.848-10',
+            'delivery_days' => '7',
+            'shopper_email' => 'sjones@test.com',
+            'shopper_reference' => '2468',
+            'amount' => '1.99',
+            'currency' => 'EUR',
+            'transaction_reference' => '123'
+        ] + $_SERVER;
+
     }
 
     public function testPurchaseReturnsCorrectClass()
@@ -278,6 +301,45 @@ class GatewayTest extends GatewayTestCase
             ['ONECLICK'],
             ['RECURRING']
         ];
+    }
+
+    public function testAuthroizeReturnsCorrectClass()
+    {
+        $request = $this->gateway->authorize($this->getAuthorizeParams());
+        $this->assertInstanceOf(AuthorizeRequest::class, $request);
+    }
+
+    public function testAuthroizeReturnsCorrectResponseClass()
+    {
+        $this->setMockHttpResponse('boletoTransaction.txt');
+        $response = $this->gateway->authorize($this->getAuthorizeParams())->send();
+        $this->assertInstanceOf(AuthorizeResponse::class, $response);
+        $this->assertEquals(
+            $response->getRedirectUrl(),
+            'https://test.adyen.com/hpp/generationBoleto.shtml'
+        );
+    }
+
+    public function testAuthroizeReturnsCorrectData()
+    {
+        $this->setMockHttpResponse('boletoTransaction.txt');
+        $response = $this->gateway->authorize($this->getAuthorizeParams())->send();
+        $this->assertEquals(
+            $response->getRedirectUrl(),
+            'https://test.adyen.com/hpp/generationBoleto.shtml'
+        );
+        $this->assertEquals(
+            $response->getExpirationDate(),
+            '2013-08-19'
+        );
+        $this->assertEquals(
+            $response->getDueDate(),
+            '2013-08-12'
+        );
+        $this->assertEquals(
+            $response->getAdditionalData(),
+            'AgABAQClZUyg1NqsD7nN5X1uqN4mabJ7A3FH5LgAUbqDnJ6EAQlnSAVL u7eWIXY/'
+        );
     }
 
     /**
