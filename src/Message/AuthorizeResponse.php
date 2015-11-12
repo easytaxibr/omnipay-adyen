@@ -11,8 +11,7 @@ use Omnipay\Common\Message\AbstractResponse;
 class AuthorizeResponse extends AbstractResponse
 {
     /**
-     * Returns whether the transaction was
-     * successful or not
+     * Always returns false because the transaction isn't complete until a future point in time.
      *
      * @return bool
      */
@@ -22,7 +21,8 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * If 3D secure is enabled the user will need to be redirected to authorization page
+     * If transaction was completed successfully there will be a redirect url provided
+     * which will direct the user to the PDF needed to complete transaction
      *
      * @return bool
      */
