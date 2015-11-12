@@ -3,7 +3,6 @@
 namespace Omnipay\Adyen\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
-use Omnipay\Adyen\Message\BaseRequest;
 
 /**
  * Class Request
