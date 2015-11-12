@@ -14,6 +14,26 @@ class BaseRequest extends AbstractRequest
     use GatewayAccessorTrait;
 
     /**
+     * Sets the complete path to the response class file used by sendData()
+     *
+     * @param boolean $value
+     */
+    public function setResponseClass($value)
+    {
+        $this->setParameter('response_class', $value);
+    }
+
+    /**
+     * Returns the response class used by sendData()
+     *
+     * @return string
+     */
+    public function getResponseClass()
+    {
+        return $this->getParameter('response_class');
+    }
+
+    /**
      * Returns the data required for the request to be created
      * Should be implemented by subclasses as the data will vary for each request
      *
@@ -29,7 +49,7 @@ class BaseRequest extends AbstractRequest
      * Response object
      *
      * @param array $data
-     * @return PaymentResponse
+     * @return Response class object
      * @throws \Omnipay\Common\Exception\InvalidRequestException
      */
     public function sendData($data)
@@ -46,13 +66,13 @@ class BaseRequest extends AbstractRequest
         $response_data = [];
         parse_str($response->getBody(true), $response_data);
 
-        return $this->response = new PaymentResponse($this, $response_data);
+        $response_class = $this->getResponseClass();
+        return $this->response = new $response_class($this, $response_data);
     }
 
     /**
      * Applies the parameters common to all payment types
      *
-     * @param \Omnipay\Adyen\Message\CreditCard $card
      * @param array $payment_params
      * @return array
      * @throws InvalidRequestException

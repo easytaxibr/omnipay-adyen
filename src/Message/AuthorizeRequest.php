@@ -3,7 +3,6 @@
 namespace Omnipay\Adyen\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
-use Omnipay\Adyen\Message\BaseRequest;
 use Omnipay\Adyen\Helpers\CpfAndCnpjValidator;
 
 /**
@@ -76,7 +75,7 @@ class AuthorizeRequest extends BaseRequest
     /**
      * Validates that the provided social security number matches expect Cpf/Cnpj format
      *
-     * @return [type] [description]
+     * @return boolean
      */
     public function validateSocialSecurityNumber()
     {
@@ -160,7 +159,7 @@ class AuthorizeRequest extends BaseRequest
                     date("i"),
                     date("s"),
                     date("m"),
-                    date("j") + $this->getDeliveryDays(),
+                    date("j") + (int) $this->getDeliveryDays(),
                     date("Y")
                 )
             );
@@ -178,6 +177,7 @@ class AuthorizeRequest extends BaseRequest
      */
     public function getData()
     {
+        $this->setResponseClass('Omnipay\Adyen\Message\AuthorizeResponse');
         if ($this->validateSocialSecurityNumber()) {
             $payment_params = [
                "paymentRequest.shopperEmail" => $this->getShopperEmail(),
@@ -198,30 +198,5 @@ class AuthorizeRequest extends BaseRequest
                 'Cpf / Cnpj Error: Number Not Valid'
             );
         }
-    }
-
-    /**
-     * Does the request to adyen server, and returns a
-     * AuthorizeResponse object
-     *
-     * @param array $data
-     * @return AuthorizeResponse
-     * @throws \Omnipay\Common\Exception\InvalidRequestException
-     */
-    public function sendData($data)
-    {
-        $response = $this->httpClient->post(
-            $this->getEndpoint(),
-            [],
-            http_build_query($data),
-            [
-                'auth' => [$this->getUsername(), $this->getPassword()]
-            ]
-        )->send();
-
-        $response_data = [];
-        parse_str($response->getBody(true), $response_data);
-
-        return $this->response = new AuthorizeResponse($this, $response_data);
     }
 }

@@ -1,6 +1,10 @@
 <?php
 namespace Omnipay\Adyen\Helpers;
 
+/**
+ * Class CpfAndCnpjValidator
+ * @package Omnipay\Adyen\Helpers
+ */
 class CpfAndCnpjValidator
 {
     private static $forbidden_cpf = [
@@ -30,6 +34,8 @@ class CpfAndCnpjValidator
     ];
 
     /**
+     * Determines if the string provided is a Cpf or Cnpj number and validates accordingly
+     *
      * @param $value
      * @return bool
      */
@@ -52,6 +58,8 @@ class CpfAndCnpjValidator
     }
 
     /**
+     * Checks to see if the Cpf value provided is matches the expected format
+     *
      * @param $value
      * @return bool
      */
@@ -98,6 +106,8 @@ class CpfAndCnpjValidator
     }
 
     /**
+     * Checks to see if the Cnpj value provided is matches the expected format
+     *
      * @param $value
      * @return bool
      */

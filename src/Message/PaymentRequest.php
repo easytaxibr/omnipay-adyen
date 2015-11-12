@@ -85,6 +85,7 @@ class PaymentRequest extends BaseRequest
     {
         $card = $this->getCard();
         $type = $this->getType();
+        $this->setResponseClass('Omnipay\Adyen\Message\PaymentResponse');
 
         if (!empty($type) && ($type == PaymentRequest::ONE_CLICK || $type == PaymentRequest::RECURRING)) {
             if (empty($card->getEmail())

@@ -2,7 +2,7 @@
 
 namespace Omnipay\Adyen\Message;
 
-use Omnipay\Adyen\Message\BaseRequest;
+// use Omnipay\Adyen\Message\BaseRequest;
 
 /**
  * Class SecureRequest - Used to make a 3D secure request
@@ -18,6 +18,7 @@ class SecureRequest extends BaseRequest
      */
     public function getData()
     {
+        $this->setResponseClass('Omnipay\Adyen\Message\PaymentResponse');
         $returned_data = $this->httpRequest->request->all();
         return [
             "action" => "Payment.authorise3d",
