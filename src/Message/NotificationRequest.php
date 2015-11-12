@@ -2,18 +2,14 @@
 
 namespace Omnipay\Adyen\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
-
 /**
  * Class NotificationRequest
  * @package Omnipay\Adyen\Message
  */
-class NotificationRequest extends AbstractRequest
+class NotificationRequest extends BaseRequest
 {
-    use GatewayAccessorTrait;
-
     /**
-     * Sets the raw data recieved in the notification
+     * Sets the raw data received in the notification
      *
      * @param string $raw_data
      */

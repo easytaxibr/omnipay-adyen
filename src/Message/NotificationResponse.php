@@ -106,7 +106,7 @@ class NotificationResponse extends AbstractResponse
     }
 
     /**
-     * Returns the value of the Boleta
+     * Returns the value of the Boleto
      *
      * @return float
      */

@@ -5,6 +5,7 @@ use Omnipay\Adyen\Message\CardResponse;
 use Omnipay\Adyen\Message\CreditCard;
 use Omnipay\Adyen\Message\AuthorizeRequest;
 use Omnipay\Adyen\Message\AuthorizeResponse;
+use Omnipay\Adyen\Message\NotificationResponse;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
@@ -290,6 +291,17 @@ class GatewayTest extends GatewayTestCase
         );
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('29625848', $response->getTransactionReference());
+        $this->assertEquals('23045997725089231', $response->getAcquirerReference());
+        $this->assertEquals('2015-11-11T14:08:12.54Z', $response->getEventDate());
+        $this->assertEquals('2015-12-01', $response->getExpirationDate());
+        $this->assertEquals('690', $response->getValue());
+        $this->assertEquals('1714472508923619', $response->getTransactionId());
+        $this->assertEquals('2015-11-16', $response->getDueDate());
+        $this->assertEquals('BRL', $response->getCurrency());
+        $this->assertEquals('boletobancario_bancodobrasil', $response->getPaymentMethod());
+        $this->assertEquals(false, $response->isChargeback());
+        $this->assertEquals(true, $response->isPending());
+        $this->assertEquals(false, $response->isAuthorized());
     }
 
     /**
