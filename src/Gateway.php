@@ -4,6 +4,7 @@ namespace Omnipay\Adyen;
 
 use Omnipay\Adyen\Message\CardRequest;
 use Omnipay\Adyen\Message\GatewayAccessorTrait;
+use Omnipay\Adyen\Message\NotificationRequest;
 use Omnipay\Adyen\Message\AuthorizeRequest;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\RefundRequest;
@@ -109,6 +110,20 @@ class Gateway extends AbstractGateway
     {
         return $this->createRequest(
             SecureRequest::class,
+            $data
+        );
+    }
+
+    /**
+     * Returns a Notification Request
+     *
+     * @param array $data
+     * @return \Omnipay\Common\Message\NotificationRequest
+     */
+    public function completeAuthorize(array $data = [])
+    {
+        return $this->createRequest(
+            NotificationRequest::class,
             $data
         );
     }

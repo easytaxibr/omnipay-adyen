@@ -5,6 +5,7 @@ use Omnipay\Adyen\Message\CardResponse;
 use Omnipay\Adyen\Message\CreditCard;
 use Omnipay\Adyen\Message\AuthorizeRequest;
 use Omnipay\Adyen\Message\AuthorizeResponse;
+use Omnipay\Adyen\Message\NotificationResponse;
 use Omnipay\Adyen\Message\PaymentRequest;
 use Omnipay\Adyen\Message\PaymentResponse;
 use Omnipay\Adyen\Message\RefundRequest;
@@ -276,6 +277,33 @@ class GatewayTest extends GatewayTestCase
         $this->assertFalse($response->isRedirect());
     }
 
+    public function testCompleteAuthorize()
+    {
+        $response = $this->gateway->completeAuthorize(
+            [
+                'raw_data' => $this->getRawNotificationString()
+            ]
+        )->send();
+
+        $this->assertInstanceOf(
+            NotificationResponse::class,
+            $response
+        );
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals('29625848', $response->getTransactionReference());
+        $this->assertEquals('23045997725089231', $response->getAcquirerReference());
+        $this->assertEquals('2015-11-11T14:08:12.54Z', $response->getEventDate());
+        $this->assertEquals('2015-12-01', $response->getExpirationDate());
+        $this->assertEquals('690', $response->getValue());
+        $this->assertEquals('1714472508923619', $response->getTransactionId());
+        $this->assertEquals('2015-11-16', $response->getDueDate());
+        $this->assertEquals('BRL', $response->getCurrency());
+        $this->assertEquals('boletobancario_bancodobrasil', $response->getPaymentMethod());
+        $this->assertEquals(false, $response->isChargeback());
+        $this->assertEquals(true, $response->isPending());
+        $this->assertEquals(false, $response->isAuthorized());
+    }
+
     /**
      * @return array
      */
@@ -324,5 +352,15 @@ class GatewayTest extends GatewayTestCase
             $response->getAdditionalData(),
             'AgABAQClZUyg1NqsD7nN5X1uqN4mabJ7A3FH5LgAUbqDnJ6EAQlnSAVL u7eWIXY/'
         );
+    }
+
+    /**
+     * Returns the raw notification string
+     *
+     * @return string
+     */
+    private function getRawNotificationString()
+    {
+        return file_get_contents('Mock/rawData.txt', FILE_USE_INCLUDE_PATH);
     }
 }
