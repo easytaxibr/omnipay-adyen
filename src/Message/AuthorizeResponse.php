@@ -91,4 +91,14 @@ class AuthorizeResponse extends AbstractResponse
     {
         return $this->data['additionalData_boletobancario_dueDate'];
     }
+
+    /**
+     * Returns the due date provided to the customer to complete boleto transaction
+     *
+     * @return string
+     */
+    public function getRefusalReason()
+    {
+        return $this->data['paymentResult_refusalReason'];
+    }
 }

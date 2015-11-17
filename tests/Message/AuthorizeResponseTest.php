@@ -36,7 +36,8 @@ class AuthorizeResponseTest extends TestCase
                 'additionalData_boletobancario_expirationDate' => '2015-01-05',
                 'additionalData_boletobancario_dueDate' => '2015-01-01',
                 'pspReference' => '8813760397300101',
-                'resultCode' => $result_code
+                'resultCode' => $result_code,
+                'paymentResult_refusalReason' => $result_code == 'Received' ? '' : 'Invalid_response'
             ]
         );
     }
@@ -93,6 +94,18 @@ class AuthorizeResponseTest extends TestCase
     {
         $this->setResponse();
         $this->assertEquals('Received', $this->response->getResultCode());
+    }
+
+    public function testGetRefusalReasonReturnValueWhenReponseIsNotReceived()
+    {
+        $this->setResponse('https://test.adyen.com/hpp/generationBoleto.shtml', 'Refused');
+        $this->assertEquals('Invalid_response', $this->response->getRefusalReason());
+    }
+
+    public function testGetRefusalReasonReturnEmptyValueWhenReponseIsReceived()
+    {
+        $this->setResponse();
+        $this->assertEquals('', $this->response->getRefusalReason());
     }
 
     public function testGetRedirctUrl()
