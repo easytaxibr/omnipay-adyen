@@ -93,7 +93,7 @@ class AuthorizeResponse extends AbstractResponse
     }
 
     /**
-     * Returns the due date provided to the customer to complete boleto transaction
+     * Returns the refusal reason for why the boleto transaction failed
      *
      * @return string
      */
