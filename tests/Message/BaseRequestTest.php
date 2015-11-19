@@ -3,6 +3,7 @@
 namespace Omnipay\Adyen\Message;
 
 use Omnipay\Tests\TestCase;
+use Omnipay\Adyen\Message\CreditCard;
 
 /**
  * Class PaymentRequestTest
@@ -51,5 +52,16 @@ class BaseRequestTest extends TestCase
     public function testFormatCurrency($amount, $expected)
     {
         $this->assertEquals($this->request->formatCurrency($amount), $expected);
+    }
+
+    /**
+     * @dataProvider adapterUnitsDataProvider
+     */
+    public function testSetCardCreatesAdyenSpecificCreditCardObject($amount, $expected)
+    {
+        $this->request->setCard(['shopper_reference' => 'shopper']);
+
+        $this->assertInstanceOf(CreditCard::class, $this->request->getCard());
+        $this->assertEquals('shopper', $this->request->getCard()->getShopperReference());
     }
 }
