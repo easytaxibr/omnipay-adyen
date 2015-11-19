@@ -4,6 +4,7 @@ namespace Omnipay\Adyen\Message;
 
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\Adyen\Message\CreditCard;
 
 /**
  * Class Request
@@ -114,5 +115,20 @@ class BaseRequest extends AbstractRequest
             $amount,
             $this->getCurrencyDecimalPlaces()
         );
+    }
+
+    /**
+     * Sets the card.
+     *
+     * @param CreditCard $value
+     * @return AbstractRequest Provides a fluent interface
+     */
+    public function setCard($value)
+    {
+        if ($value && is_array($value)) {
+            $value = new CreditCard($value);
+        }
+
+        parent::setCard($value);
     }
 }
