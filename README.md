@@ -69,6 +69,90 @@ if ($response->isSuccessful()) {
 }
 ```
 
+### One Click Credit Card Purchase Initial payment:
+A One Click card payment using [Adyen CSE](https://docs.adyen.com/display/TD/Client+Side+Encryption)
+```PHP
+$gateway = Omnipay::create('Adyen');
+$gateway->setUsername('username');
+$gateway->setPassword('password');
+$gateway->setMerchantAccount('merchant_account');
+
+$card = [
+    'encrypted_card_data' => 'encrypted_card_data', //From adyen CSE
+    'first_name' => 'MyName',
+    'last_name' => 'MySurname',
+    'billing_address1' => 'MyStreet1',
+    'billing_address2' => 'MyStreet2',
+    'billing_post_code' => 'MyPostalCode',
+    'billing_city' => 'MyCity',
+    'billing_state' => 'MyState',
+    'billing_country' => 'MyCountry',
+    'email' => 'MyEmail@Example.com',
+    'shopper_reference' => 'MyReference'
+];
+
+$response = $gateway->purchase(
+    [
+        'type' => PaymentRequest::ONE_CLICK,
+        'amount' => '1.99',
+        'currency' => 'EUR',
+        'transaction_reference' => '123',
+        'card' => $card
+    ]
+)->send();
+
+if ($response->isSuccessful()) {
+    echo "Code: {$response->getCode()} \n";
+    echo "Reference: {$response->getTransactionId()} \n";
+} else {
+    echo $response->getMessage();
+    echo "Failed\n";
+}
+```
+
+### One Click Credit Card Purchase Successive payment:
+```PHP
+$gateway = Omnipay::create('Adyen');
+$gateway->setUsername('username');
+$gateway->setPassword('password');
+$gateway->setMerchantAccount('merchant_account');
+
+$card_response = $gateway->getCard(
+    [
+        'shopper_reference' => '789',
+        'contract_type' => 'ONECLICK'
+    ]
+)->send();
+
+if ($card_response->isSuccessful()) {
+    $card = new CreditCard(
+        [
+            'cvv' => '737',
+            'email' => $card_response->getShopperEmail(),
+            'shopper_reference' => $card_response->getShopperReference()
+        ]
+    );
+
+    $response = $gateway->purchase(
+        [
+            'type' => PaymentRequest::ONE_CLICK,
+            'recurring_detail_reference' => $card_response->getRecurringDetailReference(),
+            'amount' => '1.99',
+            'currency' => 'EUR',
+            'transaction_reference' => '123',
+            'card' => $card
+        ]
+    )->send();
+
+    if ($response->isSuccessful()) {
+        echo "Code: {$response->getCode()} \n";
+        echo "Reference: {$response->getTransactionId()} \n";
+    } else {
+        echo $response->getMessage();
+        echo "Failed\n";
+    }
+}
+```
 For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
 repository.
 
