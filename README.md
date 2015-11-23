@@ -2,7 +2,7 @@
 
 **Adyen driver for the Omnipay PHP payment processing library**
 
-[Omnipay](https://github.com/thephpleague/omnipay)is a framework agnostic, multi-gateway payment
+[Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Adyen support for Omnipay and uses short array syntax and thus require PHP 5.4+.
 
 ## Installation
