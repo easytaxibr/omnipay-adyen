@@ -38,7 +38,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getResultCode()
     {
-        return $this->data['resultCode'];
+        return $this->data['paymentResult_resultCode'];
     }
 
     /**
@@ -48,7 +48,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getTransactionId()
     {
-        return $this->data['pspReference'];
+        return $this->data['paymentResult_pspReference'];
     }
 
     /**
@@ -58,7 +58,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getAdditionalData()
     {
-        return $this->data['additionalData_boletobancario_data'];
+        return $this->data['paymentResult_additionalData_boletobancario_data'];
     }
 
     /**
@@ -69,7 +69,7 @@ class AuthorizeResponse extends AbstractResponse
     public function getRedirectUrl()
     {
 
-        return $this->data['additionalData_boletobancario_url'];
+        return $this->data['paymentResult_additionalData_boletobancario_url'];
     }
 
     /**
@@ -79,7 +79,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getExpirationDate()
     {
-        return $this->data['additionalData_boletobancario_expirationDate'];
+        return $this->data['paymentResult_additionalData_boletobancario_expirationDate'];
     }
 
     /**
@@ -89,7 +89,7 @@ class AuthorizeResponse extends AbstractResponse
      */
     public function getDueDate()
     {
-        return $this->data['additionalData_boletobancario_dueDate'];
+        return $this->data['paymentResult_additionalData_boletobancario_dueDate'];
     }
 
     /**
@@ -100,5 +100,25 @@ class AuthorizeResponse extends AbstractResponse
     public function getRefusalReason()
     {
         return $this->data['paymentResult_refusalReason'];
+    }
+
+    /**
+     * Returns the acquirer reference
+     *
+     * @return string
+     */
+    public function getAcquirerReference()
+    {
+        return $this->data['paymentResult_additionalData_acquirerReference'];
+    }
+
+    /**
+     * Returns the bar code information
+     *
+     * @return string
+     */
+    public function getBarCodeReference()
+    {
+        return $this->data['paymentResult_additionalData_boletobancario_barCodeReference'];
     }
 }
