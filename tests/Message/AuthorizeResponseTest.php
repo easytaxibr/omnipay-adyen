@@ -31,13 +31,15 @@ class AuthorizeResponseTest extends TestCase
         $this->response = new AuthorizeResponse(
             $this->request,
             [
-                'additionalData_boletobancario_url' => $result_url,
-                'additionalData_boletobancario_data' => 'Some_data',
-                'additionalData_boletobancario_expirationDate' => '2015-01-05',
-                'additionalData_boletobancario_dueDate' => '2015-01-01',
-                'pspReference' => '8813760397300101',
-                'resultCode' => $result_code,
-                'paymentResult_refusalReason' => $result_code == 'Received' ? '' : 'Invalid_response'
+                'paymentResult_additionalData_boletobancario_url' => $result_url,
+                'paymentResult_additionalData_boletobancario_data' => 'Some_data',
+                'paymentResult_additionalData_boletobancario_expirationDate' => '2015-01-05',
+                'paymentResult_additionalData_boletobancario_dueDate' => '2015-01-01',
+                'paymentResult_pspReference' => '8813760397300101',
+                'paymentResult_resultCode' => $result_code,
+                'paymentResult_refusalReason' => $result_code == 'Received' ? '' : 'Invalid_response',
+                'paymentResult_additionalData_acquirerReference' => '123',
+                'paymentResult_additionalData_boletobancario_barCodeReference' => '1234 1234'
             ]
         );
     }
@@ -115,5 +117,17 @@ class AuthorizeResponseTest extends TestCase
             'https://test.adyen.com/hpp/generationBoleto.shtml',
             $this->response->getRedirectUrl()
         );
+    }
+
+    public function testGetAcquirerReference()
+    {
+        $this->setResponse();
+        $this->assertEquals('123', $this->response->getAcquirerReference());
+    }
+
+    public function testGetBarCodeReference()
+    {
+        $this->setResponse();
+        $this->assertEquals('1234 1234', $this->response->getBarCodeReference());
     }
 }

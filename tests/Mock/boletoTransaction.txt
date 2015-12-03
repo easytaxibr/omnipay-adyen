@@ -5,4 +5,4 @@ Set-Cookie: Path=/pal/; Secure; HttpOnly
 Content-Length: 108
 Content-Type: text/plain; charset=UTF-8
 
-additionalData.boletobancario.url=https://test.adyen.com/hpp/generationBoleto.shtml&additionalData.boletobancario.data=AgABAQClZUyg1NqsD7nN5X1uqN4mabJ7A3FH5LgAUbqDnJ6EAQlnSAVL+u7eWIXY/&additionalData.boletobancario.expirationDate=2013-08-19&additionalData.boletobancario.dueDate=2013-08-12&pspReference=8813760397300101&resultCode=Received
+paymentResult_additionalData.boletobancario.url=https://test.adyen.com/hpp/generationBoleto.shtml&paymentResult_additionalData.boletobancario.data=AgABAQClZUyg1NqsD7nN5X1uqN4mabJ7A3FH5LgAUbqDnJ6EAQlnSAVL+u7eWIXY/&paymentResult_additionalData.boletobancario.expirationDate=2013-08-19&paymentResult_additionalData.boletobancario.dueDate=2013-08-12&paymentResult_pspReference=8813760397300101&paymentResult_resultCode=Received
