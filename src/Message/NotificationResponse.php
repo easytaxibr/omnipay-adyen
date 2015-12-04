@@ -146,4 +146,24 @@ class NotificationResponse extends AbstractResponse
     {
         return $this->data['additionalData_acquirerReference'];
     }
+
+    /**
+     * Returns if environment status
+     *
+     * @return boolean
+     */
+    public function isLive()
+    {
+        return $this->data['live'];
+    }
+
+    /**
+     * Returns the merchant account associated with notification
+     *
+     * @return string
+     */
+    public function getMerchantAccountCode()
+    {
+        return $this->data['merchantAccountCode'];
+    }
 }
