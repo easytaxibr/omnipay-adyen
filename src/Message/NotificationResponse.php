@@ -154,7 +154,7 @@ class NotificationResponse extends AbstractResponse
      */
     public function isLive()
     {
-        return $this->data['live'];
+        return $this->data['live'] == 'true';
     }
 
     /**
