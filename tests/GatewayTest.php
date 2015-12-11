@@ -302,7 +302,7 @@ class GatewayTest extends GatewayTestCase
         $this->assertEquals(false, $response->isChargeback());
         $this->assertEquals(true, $response->isPending());
         $this->assertEquals(false, $response->isAuthorized());
-        $this->assertEquals('true', $response->isLive());
+        $this->assertEquals(true, $response->isLive());
         $this->assertEquals('YourMerchantAccount', $response->getMerchantAccountCode());
     }
 
