@@ -1,5 +1,4 @@
 <?php
-
 namespace Omnipay\Adyen\Message;
 
 use Omnipay\Tests\TestCase;
