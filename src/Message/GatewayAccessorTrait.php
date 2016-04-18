@@ -181,4 +181,27 @@ trait GatewayAccessorTrait
     {
         return $this->getParameter('shopper_reference');
     }
+
+    /**
+     * Sets the social security number
+     * Can only be used in countries that allow collection for Social Security Numbers
+     * E.g. Brazil CPF/CNPJ Number
+     *
+     * @param string $value
+     */
+    public function setSocialSecurityNumber($value)
+    {
+        $value = preg_replace('/\D/', '', $value);
+        $this->setParameter('social_security_number', $value);
+    }
+
+    /**
+     * Gets user's social security number
+     *
+     * @return string
+     */
+    public function getSocialSecurityNumber()
+    {
+        return $this->getParameter('social_security_number');
+    }
 }

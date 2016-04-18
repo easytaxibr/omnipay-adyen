@@ -55,26 +55,6 @@ class PaymentRequest extends BaseRequest
     }
 
     /**
-     * Sets the Social security number
-     *
-     * @param string $reference
-     */
-    public function setSocialSecurityNumber($number)
-    {
-        $this->setParameter('social_security_number', $number);
-    }
-
-    /**
-     * Returns the Social security number
-     *
-     * @return string
-     */
-    public function getSocialSecurityNumber()
-    {
-        return $this->getParameter('social_security_number');
-    }
-
-    /**
      * Optional: Sets 3d secure to enabled/disabled status
      *
      * @param boolean $value
@@ -114,13 +94,6 @@ class PaymentRequest extends BaseRequest
                 throw new InvalidRequestException(
                     'One Click and/or Recurring Payments require the email and shopper reference'
                 );
-            }
-            $social_security_number = $this->getSocialSecurityNumber();
-            if (!empty($social_security_number)) {
-                $payment_params = [
-                    'paymentRequest.shopperSocialSecurityNumber' => $social_security_number,
-                    'paymentRequest.socialSecurityNumber' => $social_security_number
-                ];
             }
             $recurring_detail_reference = $this->getRecurringDetailReference();
             if (empty($recurring_detail_reference)) {
@@ -199,6 +172,23 @@ class PaymentRequest extends BaseRequest
     }
 
     /**
+     * Checks if there's a social security number set and passes it for fraud purposes.
+     *
+     * @param array $payment_params
+     */
+    protected function addSocialSecurityParams(array &$payment_params)
+    {
+        $social_security_number = $this->getSocialSecurityNumber();
+
+        if (!empty($social_security_number)) {
+            $payment_params += [
+                'paymentRequest.shopperSocialSecurityNumber' => $social_security_number,
+                'paymentRequest.socialSecurityNumber' => $social_security_number
+            ];
+        }
+    }
+
+    /**
      * Applies the parameters common to all payment types
      *
      * @param \Omnipay\Adyen\Message\CreditCard $card
@@ -220,6 +210,7 @@ class PaymentRequest extends BaseRequest
                 'paymentRequest.browserInfo.acceptHeader' => $this->getHttpAccept()
             ];
         }
+        $this->addSocialSecurityParams($payment_params);
 
         return $payment_params;
     }
