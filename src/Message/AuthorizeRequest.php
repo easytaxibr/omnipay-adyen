@@ -12,27 +12,6 @@ use Omnipay\Adyen\Helpers\CpfAndCnpjValidator;
 class AuthorizeRequest extends BaseRequest
 {
     /**
-     * Sets user's social security number
-     *
-     * @param boolean $value
-     */
-    public function setSocialSecurityNumber($value)
-    {
-        $value = preg_replace('/\D/', '', $value);
-        $this->setParameter('social_security_number', $value);
-    }
-
-    /**
-     * Gets user's social security number
-     *
-     * @return string
-     */
-    public function getSocialSecurityNumber()
-    {
-        return $this->getParameter('social_security_number');
-    }
-
-    /**
      * Sets user's first name
      *
      * @param boolean $value
