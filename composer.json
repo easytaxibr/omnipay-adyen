@@ -17,12 +17,6 @@
       "Omnipay\\Adyen\\": "src/"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/Dandroas/omnipay-tests.git"
-    }
-  ],
   "require": {
     "omnipay/common": "master"
   },
