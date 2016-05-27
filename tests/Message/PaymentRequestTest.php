@@ -245,7 +245,7 @@ class PaymentRequestTest extends TestCase
             'paymentRequest.amount.value' => 199,
             'paymentRequest.reference' => '123',
             'paymentRequest.shopperEmail' => 'some@gmail.com',
-            'paymentRequest.shopperReference' => '123654',
+            'paymentRequest.shopperReference' => '123654'
         ];
     }
 
