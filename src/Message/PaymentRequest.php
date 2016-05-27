@@ -75,6 +75,25 @@ class PaymentRequest extends BaseRequest
     }
 
     /**
+     * Set fraud offset
+     * @param string value
+     */
+    public function setFraudOffset($value)
+    {
+        $this->setParameter('fraud_offset', $value);
+    }
+
+    /**
+     * Returns fraud offset
+     *
+     * @return string
+     */
+    public function getFraudOffset()
+    {
+        return $this->getParameter('fraud_offset');
+    }
+
+    /**
      * Returns the data required for the request
      * to be created
      *
@@ -172,23 +191,6 @@ class PaymentRequest extends BaseRequest
     }
 
     /**
-     * Checks if there's a social security number set and passes it for fraud purposes.
-     *
-     * @param array $payment_params
-     */
-    protected function addSocialSecurityParams(array &$payment_params)
-    {
-        $social_security_number = $this->getSocialSecurityNumber();
-
-        if (!empty($social_security_number)) {
-            $payment_params += [
-                'paymentRequest.shopperSocialSecurityNumber' => $social_security_number,
-                'paymentRequest.socialSecurityNumber' => $social_security_number
-            ];
-        }
-    }
-
-    /**
      * Applies the parameters common to all payment types
      *
      * @param \Omnipay\Adyen\Message\CreditCard $card
@@ -210,7 +212,12 @@ class PaymentRequest extends BaseRequest
                 'paymentRequest.browserInfo.acceptHeader' => $this->getHttpAccept()
             ];
         }
-        $this->addSocialSecurityParams($payment_params);
+
+        if ($this->getFraudOffset()) {
+            $payment_params += [
+                'paymentRequest.fraudOffset' => $this->getFraudOffset()
+            ];
+        }
 
         return $payment_params;
     }
