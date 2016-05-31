@@ -75,6 +75,25 @@ class PaymentRequest extends BaseRequest
     }
 
     /**
+     * Set fraud offset
+     * @param string value
+     */
+    public function setFraudOffset($value)
+    {
+        $this->setParameter('fraud_offset', $value);
+    }
+
+    /**
+     * Returns fraud offset
+     *
+     * @return string
+     */
+    public function getFraudOffset()
+    {
+        return $this->getParameter('fraud_offset');
+    }
+
+    /**
      * Returns the data required for the request
      * to be created
      *
@@ -172,10 +191,10 @@ class PaymentRequest extends BaseRequest
     }
 
     /**
-     * Checks if there's a social security number set and passes it for fraud purposes.
-     *
-     * @param array $payment_params
-     */
+    * Checks if there's a social security number set and passes it for fraud purposes.
+    *
+    * @param array $payment_params
+    */
     protected function addSocialSecurityParams(array &$payment_params)
     {
         $social_security_number = $this->getSocialSecurityNumber();
@@ -184,7 +203,7 @@ class PaymentRequest extends BaseRequest
             $payment_params += [
                 'paymentRequest.shopperSocialSecurityNumber' => $social_security_number,
                 'paymentRequest.socialSecurityNumber' => $social_security_number
-            ];
+          ];
         }
     }
 
@@ -211,6 +230,12 @@ class PaymentRequest extends BaseRequest
             ];
         }
         $this->addSocialSecurityParams($payment_params);
+
+        if ($this->getFraudOffset()) {
+            $payment_params += [
+                'paymentRequest.fraudOffset' => $this->getFraudOffset()
+            ];
+        }
 
         return $payment_params;
     }

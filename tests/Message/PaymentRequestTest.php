@@ -157,8 +157,29 @@ class PaymentRequestTest extends TestCase
         $this->assertEquals($expected, $this->request->getData());
     }
 
-    public function testGetDataReturnsExpectedFieldsAndValuesForInitialOneClickPayment()
+    public function testGetDataReturnsExpectedFieldsAndValuesForStandardPaymentWithOffset()
     {
+        $this->getRequest();
+        $this->request->setFraudOffset(-999);
+        $expected = array_merge(
+            $this->getStandardPaymentDetails(),
+            [
+                'paymentRequest.card.billingAddress.street' => 'Simon Carmiggeltstraat',
+                'paymentRequest.card.billingAddress.postalCode' => '1011 DJ',
+                'paymentRequest.card.billingAddress.city' => 'Paris',
+                'paymentRequest.card.billingAddress.houseNumberOrName' => '6-50',
+                'paymentRequest.card.billingAddress.stateOrProvince' => 'Ille dfrance',
+                'paymentRequest.card.billingAddress.country' => 'FR',
+                'paymentRequest.additionalData.card.encrypted.json' => 'some_gibberish',
+                'paymentRequest.fraudOffset' => -999
+            ]
+        );
+
+        $this->assertEquals($expected, $this->request->getData());
+    }
+
+   public function testGetDataReturnsExpectedFieldsAndValuesForInitialOneClickPayment()
+   {
         $this->getRequest(PaymentRequest::ONE_CLICK);
         $expected = array_merge(
             $this->getStandardPaymentDetails(),
