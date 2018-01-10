@@ -74,7 +74,7 @@ class CpfAndCnpjValidator
         $n = 11;
         for ($i = 0; $i <= 9; $i++) {
             $n = $n - 1;
-            $sum = $sum + (substr($cpf_valid, $i, 1) * $n);
+            $sum = $sum + ((int)substr($cpf_valid, $i, 1) * $n);
         };
 
         $rest = $sum % 11;
@@ -89,7 +89,7 @@ class CpfAndCnpjValidator
         $n = 12;
         for ($i = 0; $i <= 10; $i++) {
             $n = $n - 1;
-            $sum = $sum + (substr($cpf_valid, $i, 1) * $n);
+            $sum = $sum + ((int)substr($cpf_valid, $i, 1) * $n);
         };
 
         $rest = $sum % 11;
