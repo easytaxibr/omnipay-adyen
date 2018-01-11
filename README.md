@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/easytaxibr/omnipay-adyen.svg?branch=master)](https://travis-ci.org/easytaxibr/omnipay-adyen)
+
 # Omnipay: Adyen
 
 **Adyen driver for the Omnipay PHP payment processing library**
