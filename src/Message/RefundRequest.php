@@ -29,7 +29,7 @@ class RefundRequest extends AbstractRequest
             [
                 'auth' => [$this->getUsername(),$this->getPassword()]
             ]
-        )->send();
+        );
 
         $response_data = [];
         parse_str($response->getBody(true), $response_data);
