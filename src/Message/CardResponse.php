@@ -3,6 +3,7 @@
 namespace Omnipay\Adyen\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Adyen\RecurringDetailResult;
 
 /**
  * Class CardResponse
@@ -20,11 +21,22 @@ class CardResponse extends AbstractResponse
         return !empty($this->data);
     }
 
+    public function getResult()
+    {
+        return RecurringDetailResult::fromArray($this->data);
+    }
+
     /**
      * Returns the Recurring Detail Reference
      *
      * @return string
      */
+    public function getLastestRecurringDetailReference()
+    {
+        return $this->data['recurringDetailsResult_details_0_recurringDetailReference'];
+    }
+
+
     public function getRecurringDetailReference()
     {
         return $this->data['recurringDetailsResult_details_0_recurringDetailReference'];
