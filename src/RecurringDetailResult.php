@@ -23,7 +23,15 @@ class RecurringDetailResult
 
     public function getDetails()
     {
-        return new RecurringDetailCollection($this->parsedData['details']);
+        $recurringDetailCollection = new RecurringDetailCollection();
+
+        foreach ($this->parsedData['details'] as $detail) {
+            $recurringDetailCollection->add(
+                new RecurringDetail($detail)
+            );
+        }
+
+        return $recurringDetailCollection;
     }
 
     public function getCreationDate()

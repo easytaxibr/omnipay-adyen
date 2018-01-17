@@ -10,39 +10,54 @@ class RecurringDetailCollectionTest extends TestCase
 
     public function setUp()
     {
-        $this->recurringDetailCollection = new RecurringDetailCollection([
-            new RecurringDetail([
-                'card' => [
-                    'expiryMonth' => '10',
-                    'expiryYear' => '2021',
-                    'holderName' => 'Easy taxi',
-                    'number' => '1407'
-                ],
-                'creationDate' => '2017-11-23T16:28:27+01:00'
-            ]),
-            new RecurringDetail([
-                'card' => [
-                    'expiryMonth' => '10',
-                    'expiryYear' => '2021',
-                    'holderName' => 'Easy taxi',
-                    'number' => '1407'
-                ],
-                'creationDate' => '2017-11-23T16:28:27+01:00'
-            ])
-        ]);
+        $this->recurringDetailCollection = new RecurringDetailCollection();
+        $this->recurringDetailCollection->add(
+            new RecurringDetail(
+                [
+                    'card' => [
+                        'expiryMonth' => '10',
+                        'expiryYear' => '2021',
+                        'holderName' => 'Easy taxi',
+                        'number' => '1407'
+                    ],
+                    'creationDate' => '2017-11-23T16:28:27+01:00'
+                ]
+            )
+        );
+
+        $this->recurringDetailCollection->add(
+            new RecurringDetail(
+                [
+                    'card' => [
+                        'expiryMonth' => '10',
+                        'expiryYear' => '2021',
+                        'holderName' => 'Easy taxi',
+                        'number' => '1407'
+                    ],
+                    'creationDate' => '2017-11-23T16:28:27+01:00'
+                ]
+            )
+        );
     }
 
-    public function testGetCardByNumber()
+    public function testGetByCardNumber()
     {
         $number = '1407';
-        $this->assertEquals(
-            $this->recurringDetailCollection->getCardByNumber($number),
+        $recurringDetail = new RecurringDetail(
             [
-                'expiryMonth' => '10',
-                'expiryYear' => '2021',
-                'holderName' => 'Easy taxi',
-                'number' => '1407'
+                'card' => [
+                    'expiryMonth' => '10',
+                    'expiryYear' => '2021',
+                    'holderName' => 'Easy taxi',
+                    'number' => '1407'
+                ],
+                'creationDate' => '2017-11-23T16:28:27+01:00'
             ]
+        );
+
+        $this->assertEquals(
+            $this->recurringDetailCollection->getByCardNumber($number),
+            $recurringDetail
         );
     }
 }
